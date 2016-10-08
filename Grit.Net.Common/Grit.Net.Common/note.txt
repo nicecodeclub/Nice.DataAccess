@@ -1,6 +1,0 @@
-﻿数据库连接字符串
-
-Data Source=127.0.0.1;User ID=sa;Password=vion;Initial Catalog=tjhongxin;persist security info=false" providerName="System.Data.SqlClient"
-User ID=COUNTYT;Password=vion;Data Source=(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST=192.168.9.192)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=orcl1)))" providerName="System.Data.OracleClient"
-Server=127.0.0.1;Port=5432;User Id=postgres;Password=vion;Database=tjhongxin" providerName="Npgsql" 
-Driver={MySQL ODBC 3.51 Driver};Server=data.domain.com;Port=3306;Database=myDataBase;User=myUsername; Password=myPassword;Option=3;" providerName="MySQL" 
