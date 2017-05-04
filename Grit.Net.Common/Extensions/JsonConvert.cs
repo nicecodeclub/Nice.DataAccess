@@ -17,7 +17,7 @@ namespace Grit.Net.Common.Extensions
             if (timeConverter == null)
             {
                 timeConverter = new IsoDateTimeConverter();
-                timeConverter.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+                timeConverter.DateTimeFormat = "yyyy-MM-dd HH:mm:ss.fff";
             }
             return timeConverter;
         }

@@ -208,9 +208,9 @@ namespace Grit.Net.DataAccess.Model.Page
                 _iTotalDisplayRecords = value;
             }
         }
-        private Mapping<string, object> _specCols;
+        private IDictionary<string, object> _specCols;
         //排序列的特殊处理
-        public Mapping<string, object> specCols
+        public IDictionary<string, object> specCols
         {
             get
             {
@@ -239,6 +239,42 @@ namespace Grit.Net.DataAccess.Model.Page
                 _aaData = value;
             }
         }
-    
+
+        private string _sColumns;
+        public string sColumns
+        {
+            get
+            {
+                return _sColumns;
+            }
+            set
+            {
+                _sColumns = value;
+            }
+        }
+        private int _iSortCol_0;
+        public int iSortCol_0
+        {
+            get
+            {
+                return _iSortCol_0;
+            }
+            set
+            {
+                _iSortCol_0 = value;
+            }
+        }
+        public string _sSortDir_0 = "asc";
+        public string sSortDir_0
+        {
+            get
+            {
+                return _sSortDir_0;
+            }
+            set
+            {
+                _sSortDir_0 = value;
+            }
+        }
     }
 }

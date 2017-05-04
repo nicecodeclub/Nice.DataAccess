@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 
-namespace Common
+namespace Grit.Net.Common.Extensions
 {
     /// <summary>
     /// DataTable和List辅助类
@@ -47,45 +47,34 @@ namespace Common
         /// <param name="list">集合</param>  
         /// <param name="propertyName">需要返回的列的列名</param>  
         /// <returns>数据集(表)</returns>  
-        public static DataTable ToDataTable<T>(IList<T> list, params string[] propertyName)
+        public static DataTable ToDataTable<T>(IList<T> list, string[] propertyNames)
         {
-            List<string> propertyNameList = new List<string>();
-            if (propertyName != null)
-                propertyNameList.AddRange(propertyName);
+
             DataTable result = new DataTable();
             if (list.Count > 0)
             {
-                PropertyInfo[] propertys = list[0].GetType().GetProperties();
-                foreach (PropertyInfo pi in propertys)
+                PropertyInfo[] propertys = typeof(T).GetProperties();
+                IList<PropertyInfo> propertyArray = new List<PropertyInfo>(20);
+
+                foreach (var propertyName in propertyNames)
                 {
-                    if (propertyNameList.Count == 0)
+                    foreach (PropertyInfo pi in propertys)
                     {
-                        result.Columns.Add(pi.Name, pi.PropertyType);
-                    }
-                    else
-                    {
-                        if (propertyNameList.Contains(pi.Name))
+                        if (propertyName == pi.Name)
+                        {
+                            propertyArray.Add(pi);
                             result.Columns.Add(pi.Name, pi.PropertyType);
+                            break;
+                        }
                     }
                 }
                 for (int i = 0; i < list.Count; i++)
                 {
                     ArrayList tempList = new ArrayList();
-                    foreach (PropertyInfo pi in propertys)
+                    foreach (PropertyInfo pi in propertyArray)
                     {
-                        if (propertyNameList.Count == 0)
-                        {
-                            object obj = pi.GetValue(list[i], null);
-                            tempList.Add(obj);
-                        }
-                        else
-                        {
-                            if (propertyNameList.Contains(pi.Name))
-                            {
-                                object obj = pi.GetValue(list[i], null);
-                                tempList.Add(obj);
-                            }
-                        }
+                        object obj = pi.GetValue(list[i], null);
+                        tempList.Add(obj);
                     }
                     object[] array = tempList.ToArray();
                     result.LoadDataRow(array, true);

@@ -105,9 +105,9 @@ namespace Grit.Net.DataAccess.MySql.DAL
                         value = dr[pi.Name];
                         if (value != DBNull.Value)
                         {
-                            pi.SetValue(t, value, null);
-                            //setter = FastMethodFactory.CreatePropertySetter(pi);
-                            //setter(t, value);
+                            //pi.SetValue(t, value, null);
+                            setter = FastMethodFactory.CreatePropertySetter(pi);
+                            setter(t, value);
                         }
                     }
                     result.Add(t);

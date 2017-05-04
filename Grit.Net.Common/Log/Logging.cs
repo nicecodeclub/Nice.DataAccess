@@ -25,6 +25,7 @@ namespace Grit.Net.Common.Log
 
         private static string logDir = null;
         private static Queue<Log> logs = null;
+        private static bool IsRunning = false;
         private static ManualResetEventSlim mre = null;
         private static object locker = new object();
         public static void Create()
@@ -40,6 +41,7 @@ namespace Grit.Net.Common.Log
         /// <param name="_logDir">日志文件根目录</param>
         public static void Create(string _logDir)
         {
+
             logDir = _logDir + "\\";
             string loginfo = ConfigHelper.GetAppSettings("Log.Info", "infolog");//默认普通信息日志目录
             string errorlog = ConfigHelper.GetAppSettings("Log.Error", "errorlog");//默认错误信息日志目录
@@ -51,6 +53,7 @@ namespace Grit.Net.Common.Log
             if (!Directory.Exists(logDir + errorlog))
                 Directory.CreateDirectory(logDir + errorlog);
             logs = new Queue<Log>();
+            IsRunning = true;
             mre = new ManualResetEventSlim(false);
             Thread thread = new Thread(Work);
             thread.Start();
@@ -58,7 +61,7 @@ namespace Grit.Net.Common.Log
 
         public static void BizCreate(string bizFlag)
         {
-            string logname = logDir + "\\" + bizFlag; 
+            string logname = logDir + "\\" + bizFlag;
             if (!Directory.Exists(logname))
                 Directory.CreateDirectory(logname);
         }
@@ -165,7 +168,7 @@ namespace Grit.Net.Common.Log
         //循环等待写入
         private static void Work()
         {
-            while (true)
+            while (IsRunning)
             {
                 if (logs.Count > 0)
                     FileWrite();
@@ -243,5 +246,15 @@ namespace Grit.Net.Common.Log
             }
         }
 
+        public static void Close()
+        {
+            while (IsRunning && logs.Count > 0)
+            {
+                FileWrite();
+            }
+            IsRunning = false;
+            logs = null;
+            mre = null;
+        }
     }
 }

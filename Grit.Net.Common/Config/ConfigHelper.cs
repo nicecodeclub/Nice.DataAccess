@@ -1,8 +1,8 @@
 ﻿using Grit.Net.Common.Log;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
-using System.Xml;
+using System.Web.Configuration;
 
 namespace Grit.Net.Common.Config
 {
@@ -10,95 +10,120 @@ namespace Grit.Net.Common.Config
     /// 配置文件管理辅助类
     /// </summary>
     public static class ConfigHelper
-    {
-        public static string GetAppSettings(string strKey, string defaultValue)
+    { /// <summary>
+      /// 设置AppSetting节点
+      /// </summary>
+      /// <param name="strKey">Key</param>
+      /// <param name="strValue">Value</param>
+        public static bool SetWebAppSettings(string applicationPath, string strKey, string strValue)
         {
-            string value = ConfigurationManager.AppSettings[strKey];
-            if (string.IsNullOrWhiteSpace(value))
-                return defaultValue;
-            return value;
+            Configuration config = null;
+            try
+            {
+                //打开配置文件及相关配置节
+                config = WebConfigurationManager.OpenWebConfiguration(applicationPath);//打开配置文件及相关配置节
+            }
+            catch (ConfigurationErrorsException) { }
+            return SetAppSettings(config, new Dictionary<string, string>() { { strKey, strValue } });
         }
         /// <summary>
         /// 设置AppSetting节点
         /// </summary>
-        /// <param name="strKey"></param>
-        /// <param name="strValue"></param>
-        /// <returns></returns>
-        public static bool SetAppSettings(string strKey, string strValue)
+        /// <param name="config">Configuration实例</param>
+        /// <param name="dic">Key/Value字典</param>
+        public static bool SetWebAppSettings(string applicationPath, Dictionary<string, string> dic)
         {
+            Configuration config = null;
             try
             {
-                XmlDocument doc = new XmlDocument();
-
-                string filename = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-                doc.Load(filename);
-                XmlNodeList nodes = doc.GetElementsByTagName("add");
-                for (int i = 0; i < nodes.Count; i++)
-                {
-                    XmlAttribute att = nodes[i].Attributes["key"];
-                    if (att != null && att.Value == strKey)
-                    {
-                        att = nodes[i].Attributes["value"];
-                        att.Value = strValue;
-                        break;
-                    }
-                }
-                doc.Save(filename);
-                return true;
+                config = WebConfigurationManager.OpenWebConfiguration(applicationPath);//打开配置文件及相关配置节
             }
-            catch (XmlException ex)
-            {
-                Logging.Error(ex);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Logging.Error(ex);
-                return false;
-            }
+            catch (ConfigurationErrorsException) { }
+            return SetAppSettings(config, dic);
         }
         /// <summary>
-        ///  设置多个AppSetting节点
+        /// 设置AppSetting节点
         /// </summary>
-        /// <param name="strKey"></param>
-        /// <param name="strValue"></param>
-        /// <returns></returns>
-        public static bool SetAppSettings(string[] strKey, string[] strValue)
+        /// <param name="config">Configuration实例</param>
+        /// <param name="dic">Key/Value字典</param>
+        public static bool SetExeAppSettings(Dictionary<string, string> dic)
         {
+            Configuration config = null;
             try
             {
-                if (strKey.Length != strValue.Length)
-                    throw new InvalidDataException("键值数量匹配");
-                XmlDocument doc = new XmlDocument();
-                string filename = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
-                doc.Load(filename);
-                XmlNodeList nodes = doc.GetElementsByTagName("add");
-                for (int i = 0; i < strKey.Length; i++)
+                config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            }
+            catch (ConfigurationErrorsException) { }
+            return SetAppSettings(config, dic);
+        }
+
+        /// <summary>
+        /// 设置AppSetting节点
+        /// </summary>
+        /// <param name="strKey">Key</param>
+        /// <param name="strValue">Value</param>
+        public static bool SetExeAppSettings(string strKey, string strValue)
+        {
+            Configuration config = null;
+            try
+            {
+                //打开配置文件及相关配置节
+                config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            }
+            catch (ConfigurationErrorsException) { }
+            return SetAppSettings(config, new Dictionary<string, string>() { { strKey, strValue } });
+        }
+
+        /// <summary>
+        /// 设置AppSetting节点
+        /// </summary>
+        /// <param name="config">Configuration实例</param>
+        /// <param name="dic">Key/Value字典</param>
+        private static bool SetAppSettings(Configuration config, Dictionary<string, string> dic)
+        {
+            if (config == null) return false;
+            try
+            {
+                AppSettingsSection appSettings = config.GetSection("appSettings") as AppSettingsSection;
+                bool IsChange = false;
+                if (dic != null && dic.Count > 0)
                 {
-                    for (int j = 0; j < nodes.Count; j++)
+                    foreach (var item in dic)
                     {
-                        XmlAttribute att = nodes[j].Attributes["key"];
-                        if (att != null && att.Value == strKey[i])
+                        var settings = appSettings.Settings[item.Key];
+                        if (settings != null && settings.Value != item.Value)
                         {
-                            att = nodes[j].Attributes["value"];
-                            att.Value = strValue[i];
-                            break;
+                            settings.Value = item.Value;
+                            IsChange = true;
+                        }
+                        else if (settings == null)
+                        {
+                            appSettings.Settings.Add(item.Key, item.Value);
+                            IsChange = true;
                         }
                     }
                 }
-                doc.Save(filename);
+                if (!IsChange) return true;
+                //清除缓存
+                ConfigurationManager.RefreshSection("appSettings");
+                config.Save();
+                config = null;
                 return true;
             }
-            catch (XmlException ex)
+            catch (Exception)
             {
-                Logging.Error(ex);
                 return false;
             }
-            catch (Exception ex)
+        }
+
+        public static string GetAppSettings(string strKey, string strDefault)
+        {
+            string strValue = ConfigurationManager.AppSettings[strKey];
+            if (string.IsNullOrWhiteSpace(strValue))
             {
-                Logging.Error(ex);
-                return false;
+                return strDefault;
             }
+            return strValue;
         }
         /// <summary>
         /// 获取数据库连接字符串

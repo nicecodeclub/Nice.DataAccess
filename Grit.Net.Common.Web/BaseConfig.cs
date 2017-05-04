@@ -1,7 +1,7 @@
 ﻿using Grit.Net.Common.Attributes.Config;
 using Grit.Net.Common.Config;
 
-namespace Grit.Net.Common
+namespace Grit.Net.Common.Web
 {
     public class BaseConfig
     {

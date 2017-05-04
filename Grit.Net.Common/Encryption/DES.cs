@@ -9,6 +9,8 @@ namespace Grit.Net.Common.Encryption
 {
     public class DES
     {
+        //默认密钥向量  
+        private static readonly byte[] IV_Keys = { 0xAB, 0xCD, 0x02, 0x34, 0x56, 0xEF, 0x87, 0x91 };
         // 创建Key
         public static string GenerateKey()
         {
@@ -60,5 +62,56 @@ namespace Grit.Net.Common.Encryption
             return Encoding.Default.GetString(ms.ToArray());
         }
 
+        /// <summary>  
+        /// DES加密字符串  
+        /// </summary>  
+        /// <param name="encryptString">待加密的字符串</param>  
+        /// <param name="encryptKey">加密密钥,要求为8位</param>  
+        /// <returns>加密成功返回加密后的字符串，失败返回源串</returns>  
+        public static string EncryptDES(string encryptString, byte[] encryptKey)
+        {
+            try
+            {
+                byte[] rgbKey = encryptKey;
+                byte[] rgbIV = IV_Keys;
+                byte[] inputByteArray = Encoding.UTF8.GetBytes(encryptString);
+                DESCryptoServiceProvider dCSP = new DESCryptoServiceProvider();
+                MemoryStream mStream = new MemoryStream();
+                CryptoStream cStream = new CryptoStream(mStream, dCSP.CreateEncryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
+                cStream.Write(inputByteArray, 0, inputByteArray.Length);
+                cStream.FlushFinalBlock();
+                return System.Convert.ToBase64String(mStream.ToArray());
+            }
+            catch
+            {
+                return encryptString;
+            }
+        }
+
+        /// <summary>  
+        /// DES解密字符串  
+        /// </summary>  
+        /// <param name="decryptString">待解密的字符串</param>  
+        /// <param name="decryptKey">解密密钥,要求为8位,和加密密钥相同</param>  
+        /// <returns>解密成功返回解密后的字符串，失败返源串</returns>  
+        public static string DecryptDES(string decryptString, byte[] decryptKey)
+        {
+            try
+            {
+                byte[] rgbKey = decryptKey;
+                byte[] rgbIV = IV_Keys;
+                byte[] inputByteArray = System.Convert.FromBase64String(decryptString);
+                DESCryptoServiceProvider DCSP = new DESCryptoServiceProvider();
+                MemoryStream mStream = new MemoryStream();
+                CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateDecryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
+                cStream.Write(inputByteArray, 0, inputByteArray.Length);
+                cStream.FlushFinalBlock();
+                return Encoding.UTF8.GetString(mStream.ToArray());
+            }
+            catch
+            {
+                return decryptString;
+            }
+        }
     }
 }

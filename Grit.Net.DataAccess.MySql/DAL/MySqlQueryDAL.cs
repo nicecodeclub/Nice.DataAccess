@@ -306,7 +306,7 @@ namespace Grit.Net.DataAccess.MySql.DAL
                 t = new T();
                 object value = null;
                 DataRow dr = dt.Rows[0];
-                SetValueDelegate setter = null;
+                //SetValueDelegate setter = null;
                 foreach (PropertyInfo pi in properties)
                 {
                     if (dt.Columns.Contains(pi.Name))
@@ -314,9 +314,9 @@ namespace Grit.Net.DataAccess.MySql.DAL
                         value = dr[pi.Name];
                         if (value != DBNull.Value)
                         {
-                            //pi.SetValue(t, value, null);
-                            setter = FastMethodFactory.CreatePropertySetter(pi);
-                            setter(t, value);
+                            pi.SetValue(t, value, null);
+                            //setter = FastMethodFactory.CreatePropertySetter(pi);
+                            //setter(t, value);
                         }
                     }
                 }
@@ -340,7 +340,7 @@ namespace Grit.Net.DataAccess.MySql.DAL
                 result = new List<T>();
                 PropertyInfo[] querypropertys = null;
                 FilterProperty(dt, properties, ref querypropertys);
-                SetValueDelegate setter = null;
+                //SetValueDelegate setter = null;
                 foreach (DataRow dr in dt.Rows)
                 {
                     t = new T();
@@ -349,9 +349,9 @@ namespace Grit.Net.DataAccess.MySql.DAL
                         value = dr[pi.Name];
                         if (value != DBNull.Value)
                         {
-                            //pi.SetValue(t, value, null);
-                            setter = FastMethodFactory.CreatePropertySetter(pi);
-                            setter(t, value);
+                            pi.SetValue(t, value, null);
+                            //setter = FastMethodFactory.CreatePropertySetter(pi);
+                            //setter(t, value);
                         }
                     }
                     result.Add(t);
@@ -385,7 +385,7 @@ namespace Grit.Net.DataAccess.MySql.DAL
                     result = new List<T>();
                     PropertyInfo[] querypropertys = null;
                     FilterProperty(dt, properties, ref querypropertys);
-                    SetValueDelegate setter = null;
+                    //SetValueDelegate setter = null;
                     foreach (DataRow dr in dt.Rows)
                     {
                         t = new T();
@@ -394,9 +394,9 @@ namespace Grit.Net.DataAccess.MySql.DAL
                             value = dr[pi.Name];
                             if (value != DBNull.Value)
                             {
-                                //pi.SetValue(t, value, null);
-                                setter = FastMethodFactory.CreatePropertySetter(pi);
-                                setter(t, value);
+                                pi.SetValue(t, value, null);
+                                //setter = FastMethodFactory.CreatePropertySetter(pi);
+                                //setter(t, value);
                             }
                         }
                         result.Add(t);
@@ -435,7 +435,7 @@ namespace Grit.Net.DataAccess.MySql.DAL
                     result = new List<T>();
                     PropertyInfo[] querypropertys = null;
                     FilterProperty(dt, properties, ref querypropertys);
-                    SetValueDelegate setter = null;
+                    //SetValueDelegate setter = null;
                     foreach (DataRow dr in dt.Rows)
                     {
                         t = new T();
@@ -444,9 +444,9 @@ namespace Grit.Net.DataAccess.MySql.DAL
                             value = dr[pi.Name];
                             if (value != DBNull.Value)
                             {
-                                //pi.SetValue(t, value, null);
-                                setter = FastMethodFactory.CreatePropertySetter(pi);
-                                setter(t, value);
+                                pi.SetValue(t, value, null);
+                                //setter = FastMethodFactory.CreatePropertySetter(pi);
+                                //setter(t, value);
                             }
                         }
                         result.Add(t);
@@ -476,7 +476,7 @@ namespace Grit.Net.DataAccess.MySql.DAL
                 result = new List<T>();
                 PropertyInfo[] querypropertys = null;
                 FilterProperty(dt, properties, ref querypropertys);
-                SetValueDelegate setter = null;
+                //SetValueDelegate setter = null;
                 foreach (DataRow dr in dt.Rows)
                 {
                     t = new T();
@@ -485,9 +485,9 @@ namespace Grit.Net.DataAccess.MySql.DAL
                         value = dr[pi.Name];
                         if (value != DBNull.Value)
                         {
-                            //pi.SetValue(t, value, null);
-                            setter = FastMethodFactory.CreatePropertySetter(pi);
-                            setter(t, value);
+                            pi.SetValue(t, value, null);
+                            //setter = FastMethodFactory.CreatePropertySetter(pi);
+                            //setter(t, value);
                         }
                     }
                     result.Add(t);
