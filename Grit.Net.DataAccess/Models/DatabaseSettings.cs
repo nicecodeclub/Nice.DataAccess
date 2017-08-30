@@ -5,7 +5,7 @@ namespace Grit.Net.DataAccess
 {
     public class DatabaseSettings
     {
-        private static string dbConnString = ConfigHelper.GetConnectionString("dbConnString", string.Empty);
+        private static string dbConnString = ConfigManager.GetConnectionString("dbConnString", string.Empty);
         public static string BbConnString
         {
             get
@@ -13,7 +13,7 @@ namespace Grit.Net.DataAccess
                 return dbConnString;
             }
         }
-        private static string providerName = ConfigHelper.GetConnProviderName("dbConnString", string.Empty);
+        private static string providerName = ConfigManager.GetConnProviderName("dbConnString", string.Empty);
         public static string ProviderName
         {
             get
@@ -22,7 +22,7 @@ namespace Grit.Net.DataAccess
             }
         }
 
-        private static int commandTimeOut = int.Parse(ConfigHelper.GetAppSettings("CommandTimeOut", "30"));
+        private static int commandTimeOut = int.Parse(ConfigManager.GetAppSettings("CommandTimeOut", "30"));
         public static int CommandTimeOut
         {
             get
@@ -31,7 +31,7 @@ namespace Grit.Net.DataAccess
             }
         }
 
-        private static string dataProviderAssembly= ConfigHelper.GetAppSettings("DataFactory.Provider.Assembly", string.Empty);
+        private static string dataProviderAssembly= ConfigManager.GetAppSettings("DataFactory.Provider.Assembly", string.Empty);
         public static string DataProviderAssembly
         {
             get
@@ -39,7 +39,7 @@ namespace Grit.Net.DataAccess
                 return dataProviderAssembly;
             }
         }
-        private static string dataProviderTypeName = ConfigHelper.GetAppSettings("DataFactory.Provider.TypeName", string.Empty);
+        private static string dataProviderTypeName = ConfigManager.GetAppSettings("DataFactory.Provider.TypeName", string.Empty);
         public static string DataProviderTypeName
         {
             get
@@ -48,7 +48,7 @@ namespace Grit.Net.DataAccess
             }
         }
 
-        private static string dataFactoryGeneralDAL = ConfigHelper.GetAppSettings("DataFactory.GeneralDAL.TypeName", string.Empty);
+        private static string dataFactoryGeneralDAL = ConfigManager.GetAppSettings("DataFactory.GeneralDAL.TypeName", string.Empty);
         public static string DataFactoryGeneralDAL
         {
             get
@@ -56,7 +56,7 @@ namespace Grit.Net.DataAccess
                 return dataFactoryGeneralDAL;
             }
         }
-        private static string dataFactoryQueryDAL = ConfigHelper.GetAppSettings("DataFactory.QueryDAL.TypeName", string.Empty);
+        private static string dataFactoryQueryDAL = ConfigManager.GetAppSettings("DataFactory.QueryDAL.TypeName", string.Empty);
         public static string DataFactoryQueryDAL
         {
             get
@@ -65,7 +65,7 @@ namespace Grit.Net.DataAccess
             }
         }
 
-        private static string dataFactoryEntityAssembly = ConfigHelper.GetAppSettings("DataFactory.Entity.Assembly", string.Empty);
+        private static string dataFactoryEntityAssembly = ConfigManager.GetAppSettings("DataFactory.Entity.Assembly", string.Empty);
         public static string DataFactoryEntityAssembly
         {
             get
@@ -79,7 +79,7 @@ namespace Grit.Net.DataAccess
             }
         }
 
-        private static string dataFactoryEntityNamespace = ConfigHelper.GetAppSettings("DataFactory.Entity.Namespace", string.Empty);
+        private static string dataFactoryEntityNamespace = ConfigManager.GetAppSettings("DataFactory.Entity.Namespace", string.Empty);
         public static string DataFactoryEntityNamespace
         {
             get

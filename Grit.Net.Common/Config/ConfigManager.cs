@@ -1,116 +1,255 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using Grit.Net.Common.Log;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
-using System.IO;
+using System.Web.Configuration;
 
 namespace Grit.Net.Common.Config
 {
     /// <summary>
-    /// 基本配置信息
+    /// 配置文件管理辅助类
     /// </summary>
-    public class ConfigManager
-    {
-        private string[] node;//存放配置节点名称
-        private string[] value;//存放相应配置文件Value
-        private string filepath;
-        private static object locker = new object();
+    public static class ConfigManager
+    { /// <summary>
+      /// 设置AppSetting节点
+      /// </summary>
+      /// <param name="strKey">Key</param>
+      /// <param name="strValue">Value</param>
+        public static bool SetWebAppSettings(string applicationPath, string strKey, string strValue)
+        {
+            Configuration config = null;
+            try
+            {
+                //打开配置文件及相关配置节
+                config = WebConfigurationManager.OpenWebConfiguration(applicationPath);//打开配置文件及相关配置节
+            }
+            catch (ConfigurationErrorsException) { }
+            return SetAppSettings(config, new Dictionary<string, string>() { { strKey, strValue } });
+        }
         /// <summary>
-        /// 配置文件缓存对象
+        /// 设置AppSetting节点
         /// </summary>
-        public static ConfigManager Cache;
+        /// <param name="config">Configuration实例</param>
+        /// <param name="dic">Key/Value字典</param>
+        public static bool SetWebAppSettings(string applicationPath, Dictionary<string, string> dic)
+        {
+            Configuration config = null;
+            try
+            {
+                config = WebConfigurationManager.OpenWebConfiguration(applicationPath);//打开配置文件及相关配置节
+            }
+            catch (ConfigurationErrorsException) { }
+            return SetAppSettings(config, dic);
+        }
         /// <summary>
-        /// 通过配置文件节点名称访问配置项的值
+        /// 设置AppSetting节点
         /// </summary>
-        /// <param name="_key">节点名称</param>
+        /// <param name="config">Configuration实例</param>
+        /// <param name="dic">Key/Value字典</param>
+        public static bool SetExeAppSettings(Dictionary<string, string> dic)
+        {
+            Configuration config = null;
+            try
+            {
+                config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            }
+            catch (ConfigurationErrorsException) { }
+            return SetAppSettings(config, dic);
+        }
+
+        /// <summary>
+        /// 设置AppSetting节点
+        /// </summary>
+        /// <param name="strKey">Key</param>
+        /// <param name="strValue">Value</param>
+        public static bool SetExeAppSettings(string strKey, string strValue)
+        {
+            Configuration config = null;
+            try
+            {
+                //打开配置文件及相关配置节
+                config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            }
+            catch (ConfigurationErrorsException) { }
+            return SetAppSettings(config, new Dictionary<string, string>() { { strKey, strValue } });
+        }
+
+        /// <summary>
+        /// 设置AppSetting节点
+        /// </summary>
+        /// <param name="config">Configuration实例</param>
+        /// <param name="dic">Key/Value字典</param>
+        public static bool SetAppSettings(Configuration config, Dictionary<string, string> dic)
+        {
+            if (config == null) return false;
+            try
+            {
+                AppSettingsSection appSettings = config.GetSection("appSettings") as AppSettingsSection;
+                bool IsChange = false;
+                if (dic != null && dic.Count > 0)
+                {
+                    foreach (var item in dic)
+                    {
+                        var settings = appSettings.Settings[item.Key];
+                        if (settings != null && settings.Value != item.Value)
+                        {
+                            settings.Value = item.Value;
+                            IsChange = true;
+                        }
+                        else if (settings == null)
+                        {
+                            appSettings.Settings.Add(item.Key, item.Value);
+                            IsChange = true;
+                        }
+                    }
+                }
+                if (!IsChange) return true;
+                //清除缓存
+                ConfigurationManager.RefreshSection("appSettings");
+                config.Save();
+                config = null;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static string GetAppSettings(string strKey, string strDefault)
+        {
+            string strValue = ConfigurationManager.AppSettings[strKey];
+            if (string.IsNullOrWhiteSpace(strValue))
+            {
+                return strDefault;
+            }
+            return strValue;
+        }
+        /// <summary>
+        /// 获取数据库连接字符串
+        /// </summary>
+        /// <param name="strKey"></param>
+        /// <param name="defaultValue"></param>
         /// <returns></returns>
-        public string this[string _key]
+        public static string GetConnectionString(string strKey, string defaultValue)
         {
-            get
-            {
-                for (int i = 0; i < node.Length; i++)
-                    if (node[i] == _key.ToUpper())
-                        return value[i];
-                return null;
-            }
+            ConnectionStringSettings ConnString = ConfigurationManager.ConnectionStrings[strKey];
+            if (ConnString == null || string.IsNullOrEmpty(ConnString.ConnectionString))
+                return defaultValue;
+            return ConnString.ConnectionString;
         }
-        /// <summary>
-        /// 初始化配置文件信息
-        /// </summary>
-        public static void Initial(string startupPath)
+        public static string GetConnProviderName(string strKey, string defaultValue)
         {
-            Cache = new ConfigManager();
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            Cache.filepath = startupPath;
-            watcher.Path = Cache.filepath;
-            watcher.Filter = "*.config";
-            watcher.Changed += new FileSystemEventHandler(Cache.OnChanged);
-            watcher.EnableRaisingEvents = true;
-            Cache.Refresh();
-        }
-
-        private void Refresh()
-        {
-            lock (locker)
-            {
-                try
-                {
-
-                    AppSettingsReader reader = new AppSettingsReader();
-                    ConnectionStringSettingsCollection connStrSettings = ConfigurationManager.ConnectionStrings;
-
-                    NameValueCollection appStgs = ConfigurationManager.AppSettings;
-                    string[] names = ConfigurationManager.AppSettings.AllKeys;
-
-                    int flag = appStgs.Count;
-                    int count = flag + connStrSettings.Count * 2 + 1;
-                    node = new string[count];
-                    value = new string[count];
-
-                    for (int i = 0; i < flag; i++)
-                    {
-                        string key = names[i];
-                        node[i] = key.ToUpper();
-                        value[i] = reader.GetValue(key, typeof(string)).ToString();
-                    }
-
-                    for (int i = 0; i < connStrSettings.Count; i++)
-                    {
-                        node[flag] = connStrSettings[i].Name.ToUpper();
-                        value[flag] = connStrSettings[i].ConnectionString;
-                        flag++;
-                        node[flag] = connStrSettings[i].Name.ToUpper() + "ProviderName".ToUpper();
-                        value[flag] = connStrSettings[i].ProviderName;
-                        flag++;
-                    }
-                    //默认数据库访问驱动器
-                    node[flag] = "ProviderName".ToUpper();
-                    value[flag] = connStrSettings[1].ProviderName;
-
-
-                }
-                catch (ConfigurationErrorsException)
-                {
-                }
-                catch (NullReferenceException)
-                {
-                }
-                catch (IOException)
-                {
-                }
-                catch (Exception)
-                {
-                }
-            }
+            ConnectionStringSettings ConnString = ConfigurationManager.ConnectionStrings[strKey];
+            if (ConnString == null || string.IsNullOrEmpty(ConnString.ProviderName))
+                return defaultValue;
+            return ConnString.ProviderName;
         }
 
         /// <summary>
-        /// 当配置文件修改后，修改缓存中的Value
+        /// 修改数据库连接字符串
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="e"></param>
-        private void OnChanged(object source, FileSystemEventArgs e)
+        /// <param name="exePath">可执行文件(.exe)路径</param>
+        /// <param name="connStrName">连接字符串名</param>
+        /// <param name="connStrValue">字符串值</param>
+        /// <param name="providerName">数据库驱动名</param>
+        /// <returns></returns>
+        public static bool SetConnectionString(string exePath, string connStrName, string connStrValue,
+            string providerName)
         {
-            Refresh();
+            try
+            {
+                ConnectionStringSettings conn = new ConnectionStringSettings();
+                conn.ConnectionString = connStrValue;
+                conn.Name = connStrName;
+                conn.ProviderName = providerName;
+                Configuration conStart = ConfigurationManager.OpenExeConfiguration(exePath);
+
+                ConnectionStringsSection conSection = conStart.GetSection("connectionStrings") as ConnectionStringsSection;
+                if (conSection == null) throw new InvalidOperationException("配置文件错误！");
+                if (conSection.ConnectionStrings[connStrName] != null)
+                {
+                    conSection.ConnectionStrings.Remove(connStrName);
+                }
+                conStart.ConnectionStrings.ConnectionStrings.Add(conn);
+                conStart.Save();
+                return true;
+            }
+            catch (ConfigurationErrorsException ex)
+            {
+                Logging.Error(exePath + ":" + ex.Message);
+                return false;
+            }
+            catch (ConfigurationException ex)
+            {
+                Logging.Error(ex);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Logging.Error(ex);
+                return false;
+            }
         }
+        /// <summary>
+        /// 加密\解密数据库连接字符串
+        /// </summary>
+        /// <param name="pathName"></param>
+        /// <param name="isEncrypt"></param>
+        public static void EncryptConnectionString(string pathName, bool isEncrypt)
+        {
+            // Define the Dpapi provider name.
+            string strProvider = "DataProtectionConfigurationProvider";
+            // string strProvider = "RSAProtectedConfigurationProvider";
+
+            Configuration configuration = null;
+            ConnectionStringsSection dbConnSection = null;
+            // Open the configuration file and retrieve 
+            // the connectionStrings section.
+            // For Web!
+            // oConfiguration = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
+            // For Windows! Takes the executable file name without the config extension.
+            configuration = ConfigurationManager.OpenExeConfiguration(pathName);
+
+            if (configuration != null)
+            {
+                bool blnChanged = false;
+
+                dbConnSection = configuration.GetSection("connectionStrings") as ConnectionStringsSection;
+
+                if (dbConnSection != null)
+                {
+                    if ((!(dbConnSection.ElementInformation.IsLocked)) && (!(dbConnSection.SectionInformation.IsLocked)))
+                    {
+                        if (isEncrypt)
+                        {
+                            if (!(dbConnSection.SectionInformation.IsProtected))
+                            {
+                                blnChanged = true;
+                                // Encrypt the section.
+                                dbConnSection.SectionInformation.ProtectSection(strProvider);
+                            }
+                        }
+                        else
+                        {
+                            if (dbConnSection.SectionInformation.IsProtected)
+                            {
+                                blnChanged = true;
+                                // Remove encryption.
+                                dbConnSection.SectionInformation.UnprotectSection();
+                            }
+                        }
+                    }
+
+                    if (blnChanged)
+                    {
+                        dbConnSection.SectionInformation.ForceSave = true;
+                        configuration.Save();
+                    }
+                }
+            }
+
+        }
+
     }
 }

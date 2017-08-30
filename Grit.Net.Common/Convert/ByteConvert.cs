@@ -123,13 +123,26 @@ namespace Grit.Net.Common.Convert
             }
             return sb.ToString();
         }
+        public static string ByteArrayToHexStr(byte[] byteArray, int startIndex, int length)
+        {
+            int capacity = length * 2;
+            StringBuilder sb = new StringBuilder(capacity);
 
+            if (byteArray != null)
+            {
+                for (int i = startIndex; i < startIndex + length; i++)
+                {
+                    sb.Append(byteArray[i].ToString("X2"));
+                }
+            }
+            return sb.ToString();
+        }
         /// <summary>
         /// 十六进制字符串转换成字节数组 
         /// </summary>
         /// <param name="hexString">要转换的字符串</param>
         /// <returns></returns>
-        private static byte[] HexStrToByteArray(string hexString)
+        public static byte[] HexStrToByteArray(string hexString)
         {
             hexString = hexString.Replace(" ", "");
             if ((hexString.Length % 2) != 0)
@@ -140,6 +153,17 @@ namespace Grit.Net.Common.Convert
                 buffer[i] = System.Convert.ToByte(hexString.Substring(i * 2, 2).Trim(), 0x10);
             }
             return buffer;
+        }
+
+        public static int ToIntOrder(byte[] byteArray, int startIndex)
+        {
+            byte b = byteArray[startIndex];
+            byteArray[startIndex] = byteArray[startIndex + 3];
+            byteArray[startIndex + 3] = b;
+            b = byteArray[startIndex + 1];
+            byteArray[startIndex + 1] = byteArray[startIndex + 2];
+            byteArray[startIndex + 2] = b;
+            return BitConverter.ToInt32(byteArray, startIndex);
         }
     }
 }

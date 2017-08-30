@@ -69,6 +69,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Grit.Net.Common.Log\Grit.Net.Common.Log.csproj">
+      <Project>{257979ba-0b5b-4173-9424-25e9ebe12a2f}</Project>
+      <Name>Grit.Net.Common.Log</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Grit.Net.Common\Grit.Net.Common.csproj">
       <Project>{171641c9-d112-485c-b690-c10500d03369}</Project>
       <Name>Grit.Net.Common</Name>
