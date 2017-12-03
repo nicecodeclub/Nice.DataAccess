@@ -1,8 +1,8 @@
-﻿using Grit.Net.DataAccess.Model.Page;
-using Grit.Net.DataAccess.Models;
+﻿using Nice.DataAccess.Model.Page;
+using Nice.DataAccess.Models;
 using System.Collections.Generic;
 
-namespace Grit.Net.DataAccess.DAL
+namespace Nice.DataAccess.DAL
 {
     /// <summary>
     /// 数据访问层基础类
