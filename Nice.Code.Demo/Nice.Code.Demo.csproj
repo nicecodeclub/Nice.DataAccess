@@ -51,9 +51,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nice.DataAccess.MsSql\Nice.DataAccess.MsSql.csproj">
+      <Project>{150e2718-97fc-4c40-9350-958f9c80f6d1}</Project>
+      <Name>Nice.DataAccess.MsSql</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Nice.DataAccess.MySQL\Nice.DataAccess.MySql.csproj">
       <Project>{77f0455f-0e52-45b6-b5ce-5703cf8252b1}</Project>
       <Name>Nice.DataAccess.MySql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nice.DataAccess.Npgsql\Nice.DataAccess.Npgsql.csproj">
+      <Project>{ed22637d-af0e-4050-8dc2-8783d3f063fe}</Project>
+      <Name>Nice.DataAccess.Npgsql</Name>
     </ProjectReference>
     <ProjectReference Include="..\Nice.DataAccess\Nice.DataAccess.csproj">
       <Project>{22d2ca1e-f9a3-4fc6-b2a6-a445fc770a81}</Project>

@@ -14,26 +14,8 @@ namespace Nice.Code.Demo
             DataUtil.Create();
             rp = new UserInfoRepository();
             //TestInsert();
-            //TestUpdate();
-            UserInfo userInfo = rp.Get("27428467b52e4a3bac792c42e3d65891");
-            using (TransactionScope transactionScope1 = new TransactionScope())
-            {
-                try
-                {
-                    TestInsert();
-                    using (TransactionScope transactionScope2 = new TransactionScope())
-                    {
-                        rp.UpdateErrorTest(userInfo);
-                        transactionScope2.Complete();
-                    }
-                    transactionScope1.Complete();
-                }
-                catch (Exception)
-                {
-
-                }
-            }
-
+            TestUpdate();
+           
             Console.ReadLine();
         }
 
@@ -67,6 +49,28 @@ namespace Nice.Code.Demo
                 userInfo.ModifyTime = DateTime.Now;
                 bool result = rp.Update(userInfo);
                 Console.WriteLine("修改用户{0}", result ? "成功" : "失败");
+            }
+        }
+
+        static void TestTrans()
+        {
+            UserInfo userInfo = rp.Get("27428467b52e4a3bac792c42e3d65891");
+            using (TransactionScope transactionScope1 = new TransactionScope())
+            {
+                try
+                {
+                    TestInsert();
+                    using (TransactionScope transactionScope2 = new TransactionScope())
+                    {
+                        rp.UpdateErrorTest(userInfo);
+                        transactionScope2.Complete();
+                    }
+                    transactionScope1.Complete();
+                }
+                catch (Exception)
+                {
+
+                }
             }
         }
     }

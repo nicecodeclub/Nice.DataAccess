@@ -13,7 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Grit.Net.DataAccess.SqlClient
+namespace Nice.DataAccess.MsSql.DAL
 {
     /// <summary>
     /// 数据访问层基础类

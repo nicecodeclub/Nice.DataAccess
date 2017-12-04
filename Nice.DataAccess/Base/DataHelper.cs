@@ -300,13 +300,21 @@ namespace Nice.DataAccess
             int n = 0;
             try
             {
-                connection = dataProvider.GetConnection();
                 IDbCommand cmd = dataProvider.GetCommand();
-                connection.Open();
-                trans = connection.BeginTransaction();
-                cmd.Transaction = trans;
+                if (Transaction.Current != null)
+                {
+                    cmd.Connection = Transaction.Current.DbTransaction.Connection;
+                    cmd.Transaction = Transaction.Current.DbTransaction;
+                }
+                else
+                {
+                    connection = dataProvider.GetConnection();
+                    cmd.Connection = connection;
+                    connection.Open();
+                    trans = connection.BeginTransaction();
+                    cmd.Transaction = trans;
+                }
                 cmd.CommandTimeout = commandTimeout;
-                cmd.Connection = connection;
                 int count = 0;
                 for (; n < cmdText.Length; n++)
                 {
@@ -316,7 +324,8 @@ namespace Nice.DataAccess
                     count += cmd.ExecuteNonQuery();
 
                 }
-                trans.Commit();
+                if (trans != null)
+                    trans.Commit();
                 return count;
             }
             catch (DbException ex)

@@ -10,7 +10,7 @@ using System.Text;
 using Nice.DataAccess.Model.Page;
 
 
-namespace Grit.Net.DataAccess.SqlClient
+namespace Nice.DataAccess.MsSql.DAL
 {
     public class MsSqlQueryDAL<T> : IQueryDAL<T> where T : new()
     {

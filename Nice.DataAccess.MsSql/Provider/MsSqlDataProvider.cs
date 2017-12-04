@@ -5,7 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 
 
-namespace Grit.Net.DataAccess.MySql.Provider
+namespace Nice.DataAccess.MsSql.Provider
 {
     /// <summary>
     /// MsSql数据库操作的帮助类
