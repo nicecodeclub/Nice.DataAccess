@@ -61,7 +61,24 @@ namespace Nice.DataAccess.DAL
         {
             return dal.Update(list);
         }
-
+        /// <summary>
+        /// 添加或更新数据
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public bool InsertOrUpdate(T t)
+        {
+            return dal.Update(t);
+        }
+        /// <summary>
+        /// 添加或更新数据
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public bool InsertOrUpdate(IList<T> list)
+        {
+            return dal.Update(list);
+        }
         public bool VirtualDelete(object IdValue)
         {
             return dal.VirtualDelete(IdValue);

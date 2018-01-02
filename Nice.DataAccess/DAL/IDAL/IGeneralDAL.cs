@@ -47,6 +47,18 @@ namespace Nice.DataAccess.DAL
         /// <returns></returns>
         bool Update(IList<T> list);
         /// <summary>
+        /// 添加或更新数据
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        bool InsertOrUpdate(T t);
+        /// <summary>
+        /// 添加或更新数据
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        bool InsertOrUpdate(IList<T> list);
+        /// <summary>
         /// 获取实体
         /// </summary>
         /// <returns></returns>

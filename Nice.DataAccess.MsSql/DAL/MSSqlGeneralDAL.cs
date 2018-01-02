@@ -425,5 +425,15 @@ namespace Nice.DataAccess.MsSql.DAL
         {
             throw new NotImplementedException();
         }
+
+        public bool InsertOrUpdate(T t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool InsertOrUpdate(IList<T> list)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

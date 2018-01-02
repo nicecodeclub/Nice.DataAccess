@@ -395,6 +395,15 @@ namespace Nice.DataAccess.Npgsql.DAL
             return false;
 
         }
+        public bool InsertOrUpdate(T t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool InsertOrUpdate(IList<T> list)
+        {
+            throw new NotImplementedException();
+        }
         /// <summary>
         /// 过滤属性
         /// </summary>
