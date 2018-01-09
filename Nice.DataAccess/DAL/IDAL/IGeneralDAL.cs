@@ -35,6 +35,12 @@ namespace Nice.DataAccess.DAL
         /// <returns></returns>
         bool Delete(object idValue);
         /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        bool Delete(IList<T> list);
+        /// <summary>
         /// 更新数据
         /// </summary>
         /// <param name="t"></param>
@@ -46,6 +52,19 @@ namespace Nice.DataAccess.DAL
         /// <param name="list"></param>
         /// <returns></returns>
         bool Update(IList<T> list);
+
+        /// <summary>
+        /// 更新数据
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        bool Update(T t, IList<string> propertyNames);
+        /// <summary>
+        /// 更新数据
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        bool Update(IList<T> list,IList<string> propertyNames);
         /// <summary>
         /// 添加或更新数据
         /// </summary>
@@ -80,14 +99,25 @@ namespace Nice.DataAccess.DAL
         /// <returns></returns>
         bool IsExist(string PropertyName, object PropertyValue, object IdValue);
 
-
         /// <summary>
-        /// 是否存在
+        /// 逻辑删除
         /// </summary>
         /// <returns></returns>
         bool VirtualDelete(object IdValue);
         /// <summary>
-        /// 插入数据并返回实体
+        /// 逻辑删除
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        bool VirtualDelete(T t);
+        /// <summary>
+        /// 逻辑删除
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        bool VirtualDelete(IList<T> list);
+        /// <summary>
+        /// 插入数据并返回实体,仅支持ID为自增的数据表
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>

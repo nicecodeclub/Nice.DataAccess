@@ -501,5 +501,19 @@ namespace Nice.DataAccess.MySql.DAL
             }
         }
 
+        public bool Delete(IList<T> list)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Update(T t, IList<string> propertyNames)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Update(IList<T> list, IList<string> propertyNames)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
