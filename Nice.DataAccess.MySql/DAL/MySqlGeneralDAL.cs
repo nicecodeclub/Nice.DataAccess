@@ -515,5 +515,30 @@ namespace Nice.DataAccess.MySql.DAL
         {
             throw new NotImplementedException();
         }
+
+        public IList<T> GetList(string strWhere, IDictionary<string, object> parms)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<T> GetList(string strWhere, IDictionary<string, object> parms, PageInfo page)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool VirtualDelete(T t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool VirtualDelete(IList<T> list)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<T> Get(string strWhere, IDictionary<string, object> parms)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

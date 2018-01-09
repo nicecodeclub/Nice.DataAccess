@@ -64,7 +64,7 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        bool Update(IList<T> list,IList<string> propertyNames);
+        bool Update(IList<T> list, IList<string> propertyNames);
         /// <summary>
         /// 添加或更新数据
         /// </summary>
@@ -83,6 +83,11 @@ namespace Nice.DataAccess.DAL
         /// <returns></returns>
         T Get(object id);
         /// <summary>
+        /// 获取实体
+        /// </summary>
+        /// <returns></returns>
+        IList<T> Get(string strWhere, IDictionary<string, object> parms);
+        /// <summary>
         /// 获取实体集合
         /// </summary>
         /// <returns></returns>
@@ -92,7 +97,16 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <returns></returns>
         IList<T> GetList(PageInfo page);
-
+        /// <summary>
+        /// 获取实体集合
+        /// </summary>
+        /// <returns></returns>
+        IList<T> GetList(string strWhere, IDictionary<string, object> parms);
+        /// <summary>
+        /// 获取实体分页集合
+        /// </summary>
+        /// <returns></returns>
+        IList<T> GetList(string strWhere, IDictionary<string, object> parms, PageInfo page);
         /// <summary>
         /// 是否存在
         /// </summary>
