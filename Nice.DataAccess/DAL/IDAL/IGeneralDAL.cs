@@ -1,6 +1,7 @@
 ﻿using Nice.DataAccess.Model.Page;
 using Nice.DataAccess.Models;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Nice.DataAccess.DAL
 {
@@ -22,24 +23,6 @@ namespace Nice.DataAccess.DAL
         /// <param name="list"></param>
         /// <returns></returns>
         bool Insert(IList<T> list);
-        /// <summary>
-        /// 删除数据
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        bool Delete(T t);
-        /// <summary>
-        /// 删除数据
-        /// </summary>
-        /// <param name="idValue"></param>
-        /// <returns></returns>
-        bool Delete(object idValue);
-        /// <summary>
-        /// 删除数据
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        bool Delete(IList<T> list);
         /// <summary>
         /// 更新数据
         /// </summary>
@@ -78,6 +61,31 @@ namespace Nice.DataAccess.DAL
         /// <returns></returns>
         bool InsertOrUpdate(IList<T> list);
         /// <summary>
+        /// 插入数据并返回实体,仅支持ID为自增的数据表
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        bool InsertAndGet(T t);
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        bool Delete(T t);
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <param name="idValue"></param>
+        /// <returns></returns>
+        bool Delete(object idValue);
+        /// <summary>
+        /// 删除数据
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        bool Delete(IList<T> list);
+       
+        /// <summary>
         /// 获取实体
         /// </summary>
         /// <returns></returns>
@@ -86,7 +94,7 @@ namespace Nice.DataAccess.DAL
         /// 获取实体
         /// </summary>
         /// <returns></returns>
-        IList<T> Get(string strWhere, IDictionary<string, object> parms);
+        IList<T> Get(string strWhere, params IDataParameter[] dbps);
         /// <summary>
         /// 获取实体集合
         /// </summary>
@@ -101,12 +109,12 @@ namespace Nice.DataAccess.DAL
         /// 获取实体集合
         /// </summary>
         /// <returns></returns>
-        IList<T> GetList(string strWhere, IDictionary<string, object> parms);
+        IList<T> GetList(string strWhere, params IDataParameter[] dbps);
         /// <summary>
         /// 获取实体分页集合
         /// </summary>
         /// <returns></returns>
-        IList<T> GetList(string strWhere, IDictionary<string, object> parms, PageInfo page);
+        IList<T> GetList(string strWhere, PageInfo page, params IDataParameter[] dbps);
         /// <summary>
         /// 是否存在
         /// </summary>
@@ -130,11 +138,6 @@ namespace Nice.DataAccess.DAL
         /// <param name="t"></param>
         /// <returns></returns>
         bool VirtualDelete(IList<T> list);
-        /// <summary>
-        /// 插入数据并返回实体,仅支持ID为自增的数据表
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        bool InsertAndGet(T t);
+      
     }
 }

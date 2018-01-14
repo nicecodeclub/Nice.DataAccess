@@ -60,6 +60,8 @@
     <Compile Include="Exceptions\IdNotImplementedException.cs" />
     <Compile Include="Emit\FastMethodFactory.cs" />
     <Compile Include="Base\DatabaseSettings.cs" />
+    <Compile Include="Models\FilterValid.cs" />
+    <Compile Include="Models\IdColomn.cs" />
     <Compile Include="Models\Mapping.cs" />
     <Compile Include="Models\Page\PageInfo.cs" />
     <Compile Include="Models\Page\PageTable.cs" />
