@@ -540,7 +540,7 @@ namespace Nice.DataAccess.DAL
             if (ds != null && ds.Tables.Count == 2)
             {
                 DataTable dt = ds.Tables[0];
-                result = GetList();
+                result = GetList(dt);
                 page.TotalCount = int.Parse(ds.Tables[1].Rows[0][0].ToString());
             }
             return result;

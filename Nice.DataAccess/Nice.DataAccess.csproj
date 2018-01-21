@@ -57,6 +57,7 @@
     <Compile Include="Base\DataHelper.cs" />
     <Compile Include="Base\DataProvider.cs" />
     <Compile Include="Base\DataUtil.cs" />
+    <Compile Include="DAL\QueryBaseDAL.cs" />
     <Compile Include="Exceptions\IdNotImplementedException.cs" />
     <Compile Include="Emit\FastMethodFactory.cs" />
     <Compile Include="Base\DatabaseSettings.cs" />
