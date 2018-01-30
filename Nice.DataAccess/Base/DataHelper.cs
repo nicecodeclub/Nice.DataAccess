@@ -353,6 +353,45 @@ namespace Nice.DataAccess
                 }
             }
         }
-
+        /// <summary>
+        /// 执行ExecuteNonQuery方法，返回受影响的行数
+        /// </summary>
+        /// <param name="cmdText"></param>
+        /// <param name="trans"></param>
+        /// <param name="dbps"></param>
+        /// <returns></returns>
+        public int ExecuteNonQuery(string cmdText, IDbTransaction trans, CommandType commandType = CommandType.Text, params IDataParameter[] dbps)
+        {
+            IDbConnection connection = trans.Connection;
+            IDbCommand cmd = connection.CreateCommand();
+            if (dbps != null)
+            {
+                dataProvider.AttachParameters(cmd, dbps);
+            }
+            cmd.CommandType = commandType;
+            cmd.CommandTimeout = commandTimeout;
+            cmd.CommandText = cmdText;
+            return cmd.ExecuteNonQuery();
+        }
+        /// <summary>
+        /// 创建参数
+        /// </summary>
+        /// <param name="parameterName">参数名</param>
+        /// <param name="value">值</param>
+        /// <returns></returns>
+        public IDataParameter CreateParameter(string parameterName, object value)
+        {
+            return dataProvider.CreateParameter(parameterName, value);
+        }
+        /// <summary>
+        /// 创建事务
+        /// </summary>
+        /// <returns></returns>
+        public IDbTransaction CreateTransaction()
+        {
+            IDbConnection connection = dataProvider.GetConnection();
+            connection.Open();
+            return connection.BeginTransaction();
+        }
     }
 }

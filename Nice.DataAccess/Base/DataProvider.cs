@@ -9,5 +9,6 @@ namespace Nice.DataAccess
         public abstract IDbCommand GetCommand();
         public abstract void AttachParameters(IDbCommand command, IDataParameter[] dbps);
         public abstract IDbDataAdapter GetDataAdapter(IDbCommand command);
+        public abstract IDataParameter CreateParameter(string parameterName, object value);
     }
 }

@@ -41,6 +41,9 @@ namespace Nice.DataAccess.MySql.Provider
         {
             return new MySqlDataAdapter((MySqlCommand)command);
         }
-
+        public override IDataParameter CreateParameter(string parameterName, object value)
+        {
+            return new MySqlParameter(parameterName, value);
+        }
     }
 }
