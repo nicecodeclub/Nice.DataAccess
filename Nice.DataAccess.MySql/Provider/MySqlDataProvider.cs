@@ -45,5 +45,10 @@ namespace Nice.DataAccess.MySql.Provider
         {
             return new MySqlParameter(parameterName, value);
         }
+
+        public override char GetParameterPrefix()
+        {
+            return '?';
+        }
     }
 }

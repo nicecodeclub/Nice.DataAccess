@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
@@ -197,7 +198,6 @@ namespace Nice.DataAccess.DAL
             }
             cmdText = string.Format("UPDATE {0} SET {1} WHERE {2}=@{3}", TableName, SetColumnText, IdColomnName, IdColomnName);
         }
-
         private void PrepareDelete(object idValue, out string cmdText, out IDataParameter[] parms)
         {
             parms = new IDataParameter[] { CreateParameter("@" + IdColomn.ColomnName, idValue) };
@@ -209,6 +209,30 @@ namespace Nice.DataAccess.DAL
             parms = new IDataParameter[] { CreateParameter("@" + IdColomn.ColomnName, idValue), filterValid.ParamFilterInValid };
             cmdText = string.Format("UPDATE {0} SET {2}=@{2} WHERE {1}=@{1}", TableName, IdColomn.ColomnName, filterValid.ValidColumnName);
         }
+
+        private T Get(StringBuilder cmdText, IList<IDbDataParameter> parms)
+        {
+            DataTable dt = DataHelper.ExecuteDataTable(cmdText.ToString(), CommandType.Text, parms.ToArray());
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                T t = new T();
+                object value = null;
+                DataRow dr = dt.Rows[0];
+                PropertyInfo[] querypropertys = null;
+                FilterProperty(dt, tableProperties, ref querypropertys);
+                foreach (PropertyInfo pi in querypropertys)
+                {
+                    value = dr[pi.Name];
+                    if (value != DBNull.Value)
+                    {
+                        pi.SetValue(t, value, null);
+                    }
+                }
+                return t;
+            }
+            return default(T);
+        }
+
         private IList<T> GetList(DataTable dt)
         {
             IList<T> result = null;
@@ -324,6 +348,17 @@ namespace Nice.DataAccess.DAL
             }
         }
 
+        private void ExpressionHandling(StringBuilder cmdText, Expression<Func<T, bool>> expression)
+        {
+            IList<DataParameter> parameters = new List<DataParameter>();
+            (new ExpressionHandler(cmdText, parameters)).Execute(expression);
+            DataParameter parameter = null;
+            for (int i = 0; i < parameters.Count; i++)
+            {
+                parameter = parameters[i];
+                CreateParameter("@" + parameter.ParameterName, parameter.Value);
+            }
+        }
         #endregion
 
         #region 添加 Insert
@@ -340,7 +375,6 @@ namespace Nice.DataAccess.DAL
             string cmdText = string.Format("INSERT INTO {0}({1}) VALUES({2})", TableName, InsertColumnText, sbColumn.ToString().TrimEnd(','));
             return DataHelper.ExecuteNonQuery(cmdText, CommandType.Text, parms.ToArray()) > 0;
         }
-
         /// <summary>
         /// 插入实体
         /// </summary>
@@ -421,14 +455,46 @@ namespace Nice.DataAccess.DAL
             }
             return DataHelper.ExecuteNonQuery(cmdText, dbps) > 0;
         }
-        public bool Update(T t, IList<string> propertyNames)
+        public bool Update(T t, Expression<Func<T, bool>> expression)
         {
-            throw new NotImplementedException();
+            IList<IDbDataParameter> parms = new List<IDbDataParameter>();
+            StringBuilder cmdText = new StringBuilder();
+            cmdText.Append(" UPDATE {0} SET ");
+            ExpressionHandling(cmdText, expression);
+            string IdColomnName = IdColomn.ColomnName;
+            cmdText.AppendFormat(" WHERE {0}=@{0}", IdColomnName);
+            object IdValue = IdColomn.IdProperty.GetValue(t, null);
+            parms.Add(CreateParameter("@" + IdColomnName, IdValue));
+          
+            return DataHelper.ExecuteNonQuery(cmdText.ToString(), CommandType.Text, parms.ToArray()) > 0;
         }
 
-        public bool Update(IList<T> list, IList<string> propertyNames)
+        public bool Update(IList<T> list, Expression<Func<T, bool>> expression)
         {
-            throw new NotImplementedException();
+            IList<IDbDataParameter> parms = new List<IDbDataParameter>();
+            StringBuilder cmdSql = new StringBuilder();
+            cmdSql.Append(" UPDATE {0} SET ");
+            ExpressionHandling(cmdSql, expression);
+            string IdColomnName = IdColomn.ColomnName;
+            cmdSql.AppendFormat(" WHERE {0}=@{0}", IdColomnName);
+
+            string strSql = cmdSql.ToString();
+            string[] cmdText = new string[list.Count];
+            IDataParameter[][] dbps = new IDataParameter[list.Count()][];
+
+            T t = null;
+            List<IDbDataParameter> dbs = new List<IDbDataParameter>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                t = list[i];
+                cmdText[i] = strSql;
+                dbs.Clear();
+                dbs.AddRange(parms);
+                object IdValue = IdColomn.IdProperty.GetValue(t, null);
+                dbs.Add(CreateParameter("@" + IdColomnName, IdValue));
+                dbps[i] = dbs.ToArray();
+            }
+            return DataHelper.ExecuteNonQuery(cmdText.ToString(), CommandType.Text, parms.ToArray()) > 0;
         }
 
         #endregion
@@ -446,6 +512,7 @@ namespace Nice.DataAccess.DAL
         #endregion
 
         #region 获取 Get
+
         /// <summary>
         /// 获取实体
         /// </summary>
@@ -462,32 +529,22 @@ namespace Nice.DataAccess.DAL
                 cmdText.AppendFormat(" AND {0}=@{0}", filterValid.ValidColumnName);
                 parms.Add(filterValid.ParamFilterValid);
             }
-            DataTable dt = DataHelper.ExecuteDataTable(cmdText.ToString(), CommandType.Text, parms.ToArray());
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                T t = new T();
-                object value = null;
-                DataRow dr = dt.Rows[0];
-                PropertyInfo[] querypropertys = null;
-                FilterProperty(dt, tableProperties, ref querypropertys);
-                foreach (PropertyInfo pi in querypropertys)
-                {
-                    value = dr[pi.Name];
-                    if (value != DBNull.Value)
-                    {
-                        pi.SetValue(t, value, null);
-                    }
-                }
-                return t;
-            }
-            return default(T);
+            return Get(cmdText, parms);
         }
 
-        public IList<T> Get(string strWhere, params IDataParameter[] dbps)
+        public T Get(Expression<Func<T, bool>> expression)
         {
-            throw new NotImplementedException();
+            IList<IDbDataParameter> parms = new List<IDbDataParameter>();
+            StringBuilder cmdText = new StringBuilder(32);
+            cmdText.AppendFormat(" SELECT {0} FROM {1} WHERE ", GetColumnText, TableName);
+            ExpressionHandling(cmdText, expression);
+            if (filterValid != null)
+            {
+                cmdText.AppendFormat(" AND {0}=@{0}", filterValid.ValidColumnName);
+                parms.Add(filterValid.ParamFilterValid);
+            }
+            return Get(cmdText, parms);
         }
-
         /// <summary>
         /// 查询列表
         /// </summary>
@@ -546,14 +603,55 @@ namespace Nice.DataAccess.DAL
             return result;
         }
 
-        public IList<T> GetList(string strWhere, params IDataParameter[] dbps)
+        public IList<T> GetList(Expression<Func<T, bool>> expression)
         {
-            throw new NotImplementedException();
+            StringBuilder cmdText = new StringBuilder(32);
+            IList<IDbDataParameter> parms = new List<IDbDataParameter>();
+            cmdText.AppendFormat("SELECT {0} FROM {1} WHERE ", GetColumnText, TableName);
+            ExpressionHandling(cmdText, expression);
+            if (filterValid != null)
+            {
+                cmdText.AppendFormat(" {0}=@{0}", filterValid.ValidColumnName);
+                parms.Add(filterValid.ParamFilterValid);
+            }
+            DataTable dt = DataHelper.ExecuteDataTable(cmdText.ToString(), CommandType.Text, parms.ToArray() );
+
+            return GetList(dt);
         }
 
-        public IList<T> GetList(string strWhere, PageInfo page, params IDataParameter[] dbps)
+        public IList<T> GetList(Expression<Func<T, bool>> expression, PageInfo page)
         {
-            throw new NotImplementedException();
+            IList<T> result = null;
+            StringBuilder cmdText = new StringBuilder(100);
+            IList<IDbDataParameter> parms = new List<IDbDataParameter>();
+            cmdText.AppendFormat("SELECT {0} FROM {1} WHERE ", GetColumnText, TableName);
+            ExpressionHandling(cmdText, expression);
+            if (filterValid != null)
+            {
+                cmdText.AppendFormat(" {0}=@{0}", filterValid.ValidColumnName);
+                parms.Add(filterValid.ParamFilterValid);
+            }
+            if (page != null)
+            {
+                cmdText.AppendFormat(" ORDER BY {0} {1} LIMIT {2},{3}; "
+                    , string.IsNullOrEmpty(page.OrderColName) ? IdColomn.ColomnName : page.OrderColName, page.OrderStr, page.StartIndex, page.PageSize);
+                cmdText.AppendFormat(" SELECT COUNT(1) FROM {0} WHERE ", TableName);
+                ExpressionHandling(cmdText, expression);
+                if (filterValid != null)
+                {
+                    cmdText.AppendFormat(" {0}=@{0}", filterValid.ValidColumnName);
+                    parms.Add(filterValid.ParamFilterValid);
+                }
+                cmdText.AppendFormat(";");
+            }
+            DataSet ds = DataHelper.ExecuteDataSet(cmdText.ToString(), CommandType.Text, parms.ToArray());
+            if (ds != null && ds.Tables.Count == 2)
+            {
+                DataTable dt = ds.Tables[0];
+                result = GetList(dt);
+                page.TotalCount = int.Parse(ds.Tables[1].Rows[0][0].ToString());
+            }
+            return result;
         }
         #endregion
 

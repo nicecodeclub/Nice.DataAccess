@@ -47,6 +47,7 @@
     <Compile Include="Attributes\TableAttribute.cs" />
     <Compile Include="Attributes\TransientAttribute.cs" />
     <Compile Include="Attributes\ValidAttribute.cs" />
+    <Compile Include="Base\ExpressionHandler.cs" />
     <Compile Include="DAL\BaseDAL.cs" />
     <Compile Include="DAL\DataFactory.cs" />
     <Compile Include="DAL\IDAL\IGeneralDAL.cs" />

@@ -19,6 +19,7 @@ namespace Nice.DataAccess.MySql.DAL
     /// </summary>
     /// <typeparam name="T">TEntity实体</typeparam>
     public class MySqlGeneralDAL<T> : BaseDAL<T>, IGeneralDAL<T> where T : TEntity, new()
+    //public class MySqlGeneralDAL<T> : BaseDAL<T> where T : TEntity, new()
     {
         public MySqlGeneralDAL(string connStrKey) : base(connStrKey) { }
       

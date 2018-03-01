@@ -1,7 +1,9 @@
 ﻿using Nice.DataAccess.Model.Page;
 using Nice.DataAccess.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq.Expressions;
 
 namespace Nice.DataAccess.DAL
 {
@@ -41,13 +43,13 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        bool Update(T t, IList<string> propertyNames);
+        bool Update(T t, Expression<Func<T, bool>> expression);
         /// <summary>
         /// 更新数据
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        bool Update(IList<T> list, IList<string> propertyNames);
+        bool Update(IList<T> list, Expression<Func<T, bool>> expression);
         /// <summary>
         /// 添加或更新数据
         /// </summary>
@@ -84,7 +86,7 @@ namespace Nice.DataAccess.DAL
         /// <param name="t"></param>
         /// <returns></returns>
         bool Delete(IList<T> list);
-       
+
         /// <summary>
         /// 获取实体
         /// </summary>
@@ -94,7 +96,7 @@ namespace Nice.DataAccess.DAL
         /// 获取实体
         /// </summary>
         /// <returns></returns>
-        IList<T> Get(string strWhere, params IDataParameter[] dbps);
+        T Get(Expression<Func<T, bool>> expression);
         /// <summary>
         /// 获取实体集合
         /// </summary>
@@ -109,12 +111,12 @@ namespace Nice.DataAccess.DAL
         /// 获取实体集合
         /// </summary>
         /// <returns></returns>
-        IList<T> GetList(string strWhere, params IDataParameter[] dbps);
+        IList<T> GetList(Expression<Func<T, bool>> expression);
         /// <summary>
         /// 获取实体分页集合
         /// </summary>
         /// <returns></returns>
-        IList<T> GetList(string strWhere, PageInfo page, params IDataParameter[] dbps);
+        IList<T> GetList(Expression<Func<T, bool>> expression, PageInfo page);
         /// <summary>
         /// 是否存在
         /// </summary>
@@ -138,6 +140,6 @@ namespace Nice.DataAccess.DAL
         /// <param name="t"></param>
         /// <returns></returns>
         bool VirtualDelete(IList<T> list);
-      
+
     }
 }

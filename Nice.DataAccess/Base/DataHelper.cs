@@ -393,5 +393,9 @@ namespace Nice.DataAccess
             connection.Open();
             return connection.BeginTransaction();
         }
+        public char GetParameterPrefix()
+        {
+            return dataProvider.GetParameterPrefix();
+        }
     }
 }
