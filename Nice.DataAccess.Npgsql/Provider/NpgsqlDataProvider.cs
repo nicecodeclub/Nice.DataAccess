@@ -22,12 +22,8 @@ namespace Nice.DataAccess.Npgsql.Provider
 
         public override IDbCommand GetCommand()
         {
-            //IDbConnection conn = new NpgsqlConnection(dbConnString);
-            //conn.Open();
-            //return conn.CreateCommand();
             return new NpgsqlCommand();
         }
-
         public override void AttachParameters(IDbCommand command, IDataParameter[] dbps)
         {
             command.Parameters.Clear();
@@ -40,11 +36,19 @@ namespace Nice.DataAccess.Npgsql.Provider
                 command.Parameters.Add(p);
             }
         }
-        
+
         public override IDbDataAdapter GetDataAdapter(IDbCommand command)
         {
             return new NpgsqlDataAdapter((NpgsqlCommand)command);
         }
+        public override IDataParameter CreateParameter(string parameterName, object value)
+        {
+            return new NpgsqlParameter(parameterName, value);
+        }
 
+        public override char GetParameterPrefix()
+        {
+            return '?';
+        }
     }
 }

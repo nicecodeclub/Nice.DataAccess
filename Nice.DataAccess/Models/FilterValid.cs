@@ -4,14 +4,14 @@ namespace Nice.DataAccess.Models
 {
     public class FilterValid
     {
-        private IDbDataParameter paramFilterValid;
-        public IDbDataParameter ParamFilterValid
+        private IDataParameter paramFilterValid;
+        public IDataParameter ParamFilterValid
         {
             get { return paramFilterValid; }
             set { paramFilterValid = value; }
         }
-        private IDbDataParameter paramFilterInValid;
-        public IDbDataParameter ParamFilterInValid
+        private IDataParameter paramFilterInValid;
+        public IDataParameter ParamFilterInValid
         {
             get { return paramFilterInValid; }
             set { paramFilterInValid = value; }

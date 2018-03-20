@@ -20,7 +20,7 @@ namespace Nice.DataAccess
         /// </summary>
         /// <param name="providerName">数据库驱动名</param>
         /// <param name="dbConnString">连接字符串</param>
-        public DataHelper(DatabaseSettings dbSettings)
+        public DataHelper(DataFactoryConfig dbSettings)
         {
             object[] args = new object[] { dbSettings.ConnString };
             this.dataProvider = (DataProvider)Assembly.Load(dbSettings.DataProviderAssembly).CreateInstance(dbSettings.DataProviderTypeName, true, BindingFlags.Default, null, args, null, null);

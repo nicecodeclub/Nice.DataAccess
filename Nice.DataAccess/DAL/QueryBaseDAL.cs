@@ -84,7 +84,7 @@ namespace Nice.DataAccess.DAL
                 if (c.Equals('?'))
                 {
                     sb.AppendFormat("@{0}", parmIndex);
-                    parms[parmIndex] = CreateParameter("@" + parmIndex, parmsValue[parmIndex]);
+                    parms[parmIndex] = DataHelper.CreateParameter("@" + parmIndex, parmsValue[parmIndex]);
                     parmIndex++;
                 }
                 else
@@ -92,10 +92,6 @@ namespace Nice.DataAccess.DAL
             }
             cmdText = sb.ToString();
         }
-        #endregion
-
-        #region 抽象方法 abstract
-        protected abstract IDbDataParameter CreateParameter(string parameterName, object value);
         #endregion
 
         #region SQL查询
@@ -314,7 +310,7 @@ namespace Nice.DataAccess.DAL
                 if (columnValue.Equals("?"))
                 {
                     sb.AppendFormat("@{0}", parmIndex);
-                    parms[parmIndex] = CreateParameter("@" + parmIndex, parmsValue[parmIndex]);
+                    parms[parmIndex] = DataHelper.CreateParameter("@" + parmIndex, parmsValue[parmIndex]);
                     parmIndex++;
                 }
                 else
@@ -330,7 +326,7 @@ namespace Nice.DataAccess.DAL
                 if (columnValue.Equals("?"))
                 {
                     sb.AppendFormat("@{0}", parmIndex);
-                    parms[parmIndex] = CreateParameter("@" + parmIndex, parmsValue[parmIndex]);
+                    parms[parmIndex] = DataHelper.CreateParameter("@" + parmIndex, parmsValue[parmIndex]);
                     parmIndex++;
                 }
                 else

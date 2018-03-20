@@ -1,9 +1,9 @@
-﻿using Nice.DataAccess;
-using Nice.DataAccess.Transactions;
+﻿using Microsoft.Extensions.Configuration;
+using Nice.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using System.Transactions;
 
 namespace Nice.Code.Demo
 {
@@ -12,32 +12,18 @@ namespace Nice.Code.Demo
         private static UserInfoRepository rp = null;
         static void Main(string[] args)
         {
-            DataUtil.Create();
-            //rp = new UserInfoRepository();
-            ////TestInsert();
-            //TestUpdate();
+            var builder = new ConfigurationBuilder()
+               .SetBasePath(AppContext.BaseDirectory)
+               .AddJsonFile("appsettings.json", true, true);
+            IConfigurationRoot Configuration = builder.Build();
+            DatabaseConfig config = new DatabaseConfig();
+            config.ConnString = Configuration["ConnString"];
+            config.ProviderName = Configuration["ProviderName"];
 
-
-            // A parameter for the lambda expression.
-            ParameterExpression paramExpr = Expression.Parameter(typeof(int), "arg");
-
-            // This expression represents a lambda expression
-            // that adds 1 to the parameter value.
-            LambdaExpression lambdaExpr = Expression.Lambda(
-                Expression.Add(
-                    paramExpr,
-                    Expression.Constant(1)
-                ),
-                new List<ParameterExpression>() { paramExpr }
-            );
-
-            // Print out the expression.
-            Console.WriteLine(lambdaExpr);
-
-            // Compile and run the lamda expression.
-            // The value of the parameter is 1.
-            Console.WriteLine(lambdaExpr.Compile().DynamicInvoke(1));
-
+            DataUtil.Create(config);
+            rp = new UserInfoRepository();
+            TestInsert();
+            TestUpdate();
             Console.ReadLine();
         }
 
@@ -71,6 +57,14 @@ namespace Nice.Code.Demo
                 userInfo.ModifyTime = DateTime.Now;
                 bool result = rp.Update(userInfo);
                 Console.WriteLine("修改用户{0}", result ? "成功" : "失败");
+                userInfo = rp.Get(o => o.UserName == userInfo.UserName);
+                if (userInfo != null)
+                {
+                    userInfo.UserName = "sssss";
+                    userInfo.ModifyTime= DateTime.Now;
+                    result = rp.Update(userInfo, new string[] { "UserName", "ModifyTime" });
+                    Console.WriteLine("修改用户{0}", result ? "成功" : "失败");
+                }
             }
         }
 

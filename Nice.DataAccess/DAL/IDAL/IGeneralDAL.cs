@@ -43,13 +43,13 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="t"></param>
         /// <returns></returns>
-        bool Update(T t, Expression<Func<T, bool>> expression);
+        bool Update(T t, IList<string> properties);
         /// <summary>
         /// 更新数据
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
-        bool Update(IList<T> list, Expression<Func<T, bool>> expression);
+        bool Update(IList<T> list, IList<string> properties);
         /// <summary>
         /// 添加或更新数据
         /// </summary>

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Configuration;
 using System.Reflection;
 
 namespace Nice.DataAccess
@@ -9,31 +8,22 @@ namespace Nice.DataAccess
         public const string DefaultConnStringKey = "NiceConnString";
         private const string AssemblyNameBase = "Nice.DataAccess";
         private const int DefaultCommandTimeout = 30;
-        private static Dictionary<string, DatabaseSettings> settingsDic = new Dictionary<string, DatabaseSettings>();
+        private static Dictionary<string, DataFactoryConfig> settingsDic = new Dictionary<string, DataFactoryConfig>();
         private static Dictionary<string, DataHelper> helperDic = new Dictionary<string, DataHelper>();
         private static Dictionary<string, Assembly> dpaDic = new Dictionary<string, Assembly>();
 
-        public static void Create()
+        //public static void Create()
+        //{
+        //    Create(DefaultConnStringKey);
+        //}
+        public static void Create(DatabaseConfig config)
         {
-            Create(DefaultConnStringKey);
-        }
-
-        public static void Create(string connStrKey)
-        {
-            ConnectionStringSettings connString = ConfigurationManager.ConnectionStrings[connStrKey];
-            string innerName = DatabaseTypeEx.GetStandardInnerName(connString.ProviderName);
-            DatabaseSettings settings = new DatabaseSettings();
-            settings.ConnString = connString.ConnectionString;
-            settings.ProviderName = connString.ProviderName;
-            object commandTimeout = ConfigurationManager.AppSettings[connStrKey + ".CommandTimeout"];
-            if (commandTimeout == null)
-            {
-                settings.CommandTimeout = DefaultCommandTimeout;
-            }
-            else
-            {
-                settings.CommandTimeout = int.Parse(commandTimeout.ToString());
-            }
+            string innerName = DatabaseTypeEx.GetStandardInnerName(config.ProviderName);
+            string connStrKey = string.IsNullOrEmpty(config.ConnStrKey) ? DefaultConnStringKey : config.ConnStrKey;
+            DataFactoryConfig settings = new DataFactoryConfig();
+            settings.ConnString = config.ConnString;
+            settings.ProviderName = config.ProviderName;
+            settings.CommandTimeout = config.CommandTimeout <= 0 ? DefaultCommandTimeout : config.CommandTimeout;
             settings.DataProviderAssembly = AssemblyNameBase + "." + innerName;
             settings.DataProviderTypeName = settings.DataProviderAssembly + ".Provider." + innerName + "DataProvider";
             settings.DataFactoryGeneralDAL = settings.DataProviderAssembly + ".DAL." + innerName + "GeneralDAL";
@@ -52,7 +42,7 @@ namespace Nice.DataAccess
             return dpaDic[connStrKey];
         }
 
-        public static DatabaseSettings GetSettings(string connStrKey)
+        public static DataFactoryConfig GetSettings(string connStrKey)
         {
             return settingsDic[connStrKey];
         }
