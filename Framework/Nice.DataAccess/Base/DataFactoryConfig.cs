@@ -1,31 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Nice.DataAccess
+﻿namespace Nice.DataAccess
 {
-    public class DatabaseSettings
+    public class DataFactoryConfig : DatabaseConfig
     {
-        private string connString;
-        public string ConnString
-        {
-            get { return connString; }
-            set { connString = value; }
-        }
-        private string providerName;
-        public string ProviderName
-        {
-            get { return providerName; }
-            set { providerName = value; }
-        }
-        private int commandTimeout;
-        public int CommandTimeout
-        {
-            get { return commandTimeout; }
-            set { commandTimeout = value; }
-        }
+
         private string dataProviderAssembly;
         public string DataProviderAssembly
         {
