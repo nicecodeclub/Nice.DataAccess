@@ -33,6 +33,11 @@ namespace Nice.DataAccess
             dpaDic.Add(connStrKey, Assembly.Load(settings.DataProviderAssembly));
         }
 
+        public static DataHelper GetDataHelper()
+        {
+            return helperDic[DefaultConnStringKey];
+        }
+
         public static DataHelper GetDataHelper(string connStrKey)
         {
             return helperDic[connStrKey];
