@@ -1,4 +1,5 @@
 ﻿
+using Nice.DataAccess.Exceptions;
 using Nice.DataAccess.Transactions;
 using System;
 using System.Data;
@@ -96,7 +97,7 @@ namespace Nice.DataAccess
             }
             catch (DbException ex)
             {
-                throw ex;
+                throw new DbExcuteException(cmdText, ex);
             }
             catch (Exception ex)
             {
@@ -155,6 +156,20 @@ namespace Nice.DataAccess
             }
         }
         /// <summary>
+        /// 执行IDbCommand类的ExecuteScalar方法,返回object
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
+        /// <param name="commandType">执行方式，默认CommandType.Text</param>
+        /// <returns>返回object类型数据，失败返回null</returns>
+        public T ExecuteScalar<T>(string cmdText, CommandType commandType = CommandType.Text, params IDataParameter[] dbps)
+        {
+            object value = ExecuteScalar(cmdText, commandType, dbps);
+            if (value == null)
+                return default(T);
+            return (T)Convert.ChangeType(value, typeof(T));
+        }
+        /// <summary>
         /// 执行IDbCommand类的ExecuteReader方法,返回SqlDataReader
         /// [调用完成后，请关闭IDataReader对象]
         /// </summary>
@@ -182,7 +197,7 @@ namespace Nice.DataAccess
             }
             catch (DbException ex)
             {
-                throw ex;
+                throw new DbExcuteException(cmdText, ex);
             }
             catch (Exception ex)
             {
@@ -225,7 +240,7 @@ namespace Nice.DataAccess
             }
             catch (DbException ex)
             {
-                throw ex;
+                throw new DbExcuteException(cmdText, ex);
             }
             catch (Exception ex)
             {
@@ -272,7 +287,7 @@ namespace Nice.DataAccess
             }
             catch (DbException ex)
             {
-                throw ex;
+                throw new DbExcuteException(cmdText, ex);
             }
             catch (Exception ex)
             {

@@ -22,9 +22,11 @@ namespace Nice.DataAccess.DAL
     {
         public static IQueryDAL<T> Create(string connStrKey)
         {
-            return DataUtil.GetAssembly(connStrKey).CreateInstance(string.Format("{0}`1[[{1}]]", DataUtil.GetSettings(connStrKey).DataFactoryQueryDAL, typeof(T).AssemblyQualifiedName)) as IQueryDAL<T>;
+            return DataUtil.GetAssembly(connStrKey).CreateInstance(string.Format("{0}`1[[{1}]]", DataUtil.GetSettings(connStrKey).DataFactoryQueryDAL, typeof(T).AssemblyQualifiedName)
+                , false, BindingFlags.Default, null, new string[] { connStrKey }, null, null) as IQueryDAL<T>;
         }
     }
+
     public class QueryFactory
     {
         public static IQueryDAL Create(string connStrKey)

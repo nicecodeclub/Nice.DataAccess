@@ -20,7 +20,7 @@ namespace Nice.DataAccess.DAL
             return dal.GetBySQL(cmdText);
         }
 
-        public T GetBySQL(string cmdText, object[] parmsValue)
+        public T GetBySQL(string cmdText, IList<object> parmsValue)
         {
             return dal.GetBySQL(cmdText, parmsValue);
         }
@@ -35,11 +35,11 @@ namespace Nice.DataAccess.DAL
             return dal.GetListBySQL(cmdText, page);
         }
 
-        public IList<T> GetListBySQL(string cmdText, object[] parmsValue)
+        public IList<T> GetListBySQL(string cmdText, IList<object> parmsValue)
         {
             return dal.GetListBySQL(cmdText, parmsValue);
         }
-        public IList<T> GetListBySQL(string cmdText, object[] parmsValue, PageInfo page)
+        public IList<T> GetListBySQL(string cmdText, IList<object> parmsValue, PageInfo page)
         {
             return dal.GetListBySQL(cmdText, parmsValue, page);
         }
@@ -63,7 +63,7 @@ namespace Nice.DataAccess.DAL
         /// <param name="cmdText"></param>
         /// <param name="parmsValue"></param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(string cmdText, object[] parmsValue)
+        public static int ExecuteNonQuery(string cmdText, IList<object> parmsValue)
         {
             return dal.ExecuteNonQuery(cmdText, parmsValue);
         }
@@ -73,7 +73,7 @@ namespace Nice.DataAccess.DAL
         /// <param name="cmdText"></param>
         /// <param name="parmsValue"></param>
         /// <returns></returns>
-        public static object ExecuteScalar(string cmdText, object[] parmsValue)
+        public static object ExecuteScalar(string cmdText, IList<object> parmsValue)
         {
             return dal.ExecuteScalar(cmdText, parmsValue);
         }
@@ -83,7 +83,7 @@ namespace Nice.DataAccess.DAL
         /// <param name="cmdText"></param>
         /// <param name="parmsValue"></param>
         /// <returns></returns>
-        public static int ExecuteNonQuery(string[] cmdText, object[][] parmsValue)
+        public static int ExecuteNonQuery(string[] cmdText, IList<IList<object>> parmsValue)
         {
             return dal.ExecuteNonQuery(cmdText, parmsValue);
         }

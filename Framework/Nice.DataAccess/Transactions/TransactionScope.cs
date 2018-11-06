@@ -9,7 +9,11 @@ namespace Nice.DataAccess.Transactions
         //private Transaction _expectedCurrent;
         //private CommittableTransaction _committableTransaction;
         //private DependentTransaction _dependentTransaction;
-        public TransactionScope(string connStriKey = DataUtil.DefaultConnStringKey, IsolationLevel isolationLevel = IsolationLevel.Unspecified)
+        public TransactionScope(IsolationLevel isolationLevel = IsolationLevel.Unspecified) :
+            this(DataUtil.DefaultConnStringKey, isolationLevel)
+        { }
+
+        public TransactionScope(string connStriKey, IsolationLevel isolationLevel = IsolationLevel.Unspecified)
         {
             if (transaction == null)
             {

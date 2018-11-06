@@ -382,12 +382,12 @@ namespace Nice.DataAccess.DAL
         private void ExpressionHandling(StringBuilder cmdText, Expression<Func<T, bool>> expression, IList<IDataParameter> parms)
         {
             IList<DataParameter> parameters = new List<DataParameter>();
-            (new ExpressionHandler(cmdText, parameters)).Execute(expression);
+            (new ExpressionHandler(DataHelper, cmdText, parameters)).Execute(expression);
             DataParameter parameter = null;
             for (int i = 0; i < parameters.Count; i++)
             {
                 parameter = parameters[i];
-                parms.Add(DataHelper.CreateParameter(DataHelper.GetParameterPrefix() + parameter.ParameterName, parameter.Value));
+                parms.Add(DataHelper.CreateParameter(parameter.ParameterName, parameter.Value));
             }
         }
         #endregion
@@ -558,7 +558,7 @@ namespace Nice.DataAccess.DAL
             parms.Add(DataHelper.CreateParameter(DataHelper.GetParameterPrefix() + IdColomn.ColomnName, IdValue));
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" WHERE {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
                 parms.Add(filterValid.ParamFilterValid);
             }
             return Get(cmdText, parms);
@@ -572,7 +572,7 @@ namespace Nice.DataAccess.DAL
             ExpressionHandling(cmdText, expression, parms);
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" WHERE {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
                 parms.Add(filterValid.ParamFilterValid);
             }
             return Get(cmdText, parms);
@@ -610,7 +610,7 @@ namespace Nice.DataAccess.DAL
             IDataParameter[] parms = null;
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" WHERE {0}={0}{1}", DataHelper.GetParameterPrefix(), filterValid.ValidColumnName);
+                cmdText.AppendFormat(" WHERE {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
                 parms = new IDataParameter[] { filterValid.ParamFilterValid };
             }
             if (page != null)
@@ -620,8 +620,7 @@ namespace Nice.DataAccess.DAL
                 cmdText.AppendFormat(" SELECT COUNT(1) FROM {0}", TableName);
                 if (filterValid != null)
                 {
-                    cmdText.AppendFormat(" WHERE {0}={0}{1}", DataHelper.GetParameterPrefix(), filterValid.ValidColumnName);
-                    parms = new IDataParameter[] { filterValid.ParamFilterValid };
+                    cmdText.AppendFormat(" WHERE {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
                 }
                 cmdText.AppendFormat(";");
             }
@@ -643,7 +642,7 @@ namespace Nice.DataAccess.DAL
             ExpressionHandling(cmdText, expression, parms);
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" {0}={0}{1}", DataHelper.GetParameterPrefix(), filterValid.ValidColumnName);
+                cmdText.AppendFormat(" {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
                 parms.Add(filterValid.ParamFilterValid);
             }
             DataTable dt = DataHelper.ExecuteDataTable(cmdText.ToString(), CommandType.Text, parms.ToArray());
@@ -657,22 +656,22 @@ namespace Nice.DataAccess.DAL
             StringBuilder cmdText = new StringBuilder(100);
             IList<IDataParameter> parms = new List<IDataParameter>();
             cmdText.AppendFormat("SELECT {0} FROM {1} WHERE ", GetColumnText, TableName);
-            ExpressionHandling(cmdText, expression, parms);
+            StringBuilder whereText = new StringBuilder();
+            ExpressionHandling(whereText, expression, parms);
+            cmdText.Append(whereText);
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" {0}={0}{1}", DataHelper.GetParameterPrefix(), filterValid.ValidColumnName);
+                cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
                 parms.Add(filterValid.ParamFilterValid);
             }
             if (page != null)
             {
                 cmdText.AppendFormat(" ORDER BY {0} {1} LIMIT {2},{3}; "
                     , string.IsNullOrEmpty(page.OrderColName) ? IdColomn.ColomnName : page.OrderColName, page.OrderStr, page.StartIndex, page.PageSize);
-                cmdText.AppendFormat(" SELECT COUNT(1) FROM {0} WHERE ", TableName);
-                ExpressionHandling(cmdText, expression, parms);
+                cmdText.AppendFormat(" SELECT COUNT(1) FROM {0} WHERE {1}", TableName, whereText);
                 if (filterValid != null)
                 {
-                    cmdText.AppendFormat(" {0}={0}{1}", DataHelper.GetParameterPrefix(), filterValid.ValidColumnName);
-                    parms.Add(filterValid.ParamFilterValid);
+                    cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
                 }
                 cmdText.AppendFormat(";");
             }

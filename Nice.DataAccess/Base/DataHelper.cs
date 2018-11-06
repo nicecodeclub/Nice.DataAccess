@@ -1,4 +1,5 @@
 ﻿
+using Nice.DataAccess.Exceptions;
 using Nice.DataAccess.Transactions;
 using System;
 using System.Data;
@@ -96,7 +97,7 @@ namespace Nice.DataAccess
             }
             catch (DbException ex)
             {
-                throw ex;
+                throw new DbExcuteException(cmdText, ex);
             }
             catch (Exception ex)
             {
@@ -196,7 +197,7 @@ namespace Nice.DataAccess
             }
             catch (DbException ex)
             {
-                throw ex;
+                throw new DbExcuteException(cmdText, ex);
             }
             catch (Exception ex)
             {
@@ -239,7 +240,7 @@ namespace Nice.DataAccess
             }
             catch (DbException ex)
             {
-                throw ex;
+                throw new DbExcuteException(cmdText, ex);
             }
             catch (Exception ex)
             {
@@ -286,7 +287,7 @@ namespace Nice.DataAccess
             }
             catch (DbException ex)
             {
-                throw ex;
+                throw new DbExcuteException(cmdText, ex);
             }
             catch (Exception ex)
             {

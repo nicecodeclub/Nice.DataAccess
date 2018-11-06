@@ -11,11 +11,12 @@ namespace Nice.DataAccess
         private readonly StringBuilder sbSql = null;
         private readonly IList<DataParameter> parameters = null;
         private int index = 0;
-
-        public ExpressionHandler(StringBuilder sbSql, IList<DataParameter> parameters)
+        protected readonly DataHelper DataHelper = null;
+        public ExpressionHandler(DataHelper DataHelper, StringBuilder sbSql, IList<DataParameter> parameters)
         {
             this.sbSql = sbSql;
             this.parameters = parameters;
+            this.DataHelper = DataHelper;
         }
 
         public void Execute<T>(Expression<Func<T, T>> expression)
@@ -25,11 +26,6 @@ namespace Nice.DataAccess
         public void Execute<T>(Expression<Func<T, bool>> expression)
         {
             Execute(expression.Body);
-            //Console.WriteLine(sbSql.ToString());
-            //foreach (DataParameter parameter in parameters)
-            //{
-            //    Console.WriteLine("{0}={1} ,{2}", parameter.ParameterName, parameter.Value, parameter.Value.GetType().Name);
-            //}
         }
 
         public void Execute(Expression expression)
@@ -103,7 +99,7 @@ namespace Nice.DataAccess
                 if (expression.Expression is ParameterExpression)
                 {
                     sbSql.Append(expression.Member.Name);
-                    parameters.Add(new DataParameter() { ParameterName = string.Format("@{0}", expression.Member.Name) });
+                    parameters.Add(new DataParameter() { ParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), expression.Member.Name) });
                 }
                 else
                 {

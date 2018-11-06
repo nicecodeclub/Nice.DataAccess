@@ -72,10 +72,10 @@ namespace Nice.DataAccess.DAL
         /// 过滤SQL参数
         /// </summary>
         /// <param name="cmdText"></param>
-        private void FilterSQLParmeters(ref string cmdText, object[] parmsValue, ref IDataParameter[] parms)
+        private void FilterSQLParmeters(ref string cmdText, IList<object> parmsValue, ref IDataParameter[] parms)
         {
             StringBuilder sb = new StringBuilder();
-            parms = new IDataParameter[parmsValue.Length];
+            parms = new IDataParameter[parmsValue.Count];
             char c;
             int parmIndex = 0;
             for (int i = 0; i < cmdText.Length; i++)
@@ -109,7 +109,7 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="IdValue">主键</param>
         /// <returns></returns>
-        public T GetBySQL(string cmdText, object[] parmsValue)
+        public T GetBySQL(string cmdText, IList<object> parmsValue)
         {
             T t = default(T);
             IDataParameter[] parms = null;
@@ -159,7 +159,7 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="cmdText">SQL</param>
         /// <returns></returns>
-        public IList<T> GetListBySQL(string cmdText, object[] parmsValue, PageInfo page)
+        public IList<T> GetListBySQL(string cmdText, IList<object> parmsValue, PageInfo page)
         {
             IList<T> result = null;
             IDataParameter[] parms = null;
@@ -186,7 +186,7 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="IdValue">主键</param>
         /// <returns></returns>
-        public IList<T> GetListBySQL(string cmdText, object[] parmsValue)
+        public IList<T> GetListBySQL(string cmdText, IList<object> parmsValue)
         {
             IDataParameter[] parms = null;
             if (parmsValue != null)
@@ -233,10 +233,10 @@ namespace Nice.DataAccess.DAL
         /// 过滤QL
         /// </summary>
         /// <param name="cmdText"></param>
-        private void FilterQueryText(ref string cmdText, object[] parmsValue, ref IDataParameter[] parms)
+        private void FilterQueryText(ref string cmdText, IList<object> parmsValue, ref IDataParameter[] parms)
         {
             StringBuilder sb = new StringBuilder();
-            parms = new IDataParameter[parmsValue.Length];
+            parms = new IDataParameter[parmsValue.Count];
             cmdText = cmdText.ToUpper();
             int index = cmdText.IndexOf(flagWhere);
             string strSelect = cmdText.Remove(index);
@@ -293,7 +293,7 @@ namespace Nice.DataAccess.DAL
         /// <summary>
         /// 将属性名转换为表字段名
         /// </summary>
-        private void PropertyToColumnName(string strWhere, StringBuilder sb, object[] parmsValue, IDataParameter[] parms, ref int parmIndex)
+        private void PropertyToColumnName(string strWhere, StringBuilder sb, IList<object> parmsValue, IDataParameter[] parms, ref int parmIndex)
         {
             int indexFlag = strWhere.IndexOf('=');
             string columnName = strWhere.Substring(0, indexFlag).Trim();
@@ -353,7 +353,7 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="IdValue">主键</param>
         /// <returns></returns>
-        public IList<T> GetList(string cmdText, object[] parmsValue)
+        public IList<T> GetList(string cmdText, IList<object> parmsValue)
         {
             IDataParameter[] parms = null;
             if (parmsValue != null)

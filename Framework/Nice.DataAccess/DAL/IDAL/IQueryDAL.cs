@@ -6,7 +6,7 @@ namespace Nice.DataAccess.DAL
     public interface IQueryDAL<T> where T : new()
     {
         T GetBySQL(string cmdText);
-        T GetBySQL(string cmdText, object[] parmsValue);
+        T GetBySQL(string cmdText, IList<object> parmsValue);
         IList<T> GetListBySQL(string cmdText);
         /// <summary>
         /// SQL查询列表
@@ -19,7 +19,7 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="IdValue">主键</param>
         /// <returns></returns>
-        IList<T> GetListBySQL(string cmdText, object[] parmsValue);
+        IList<T> GetListBySQL(string cmdText, IList<object> parmsValue);
         /// <summary>
         /// SQL查询列表
         /// </summary>
@@ -27,7 +27,7 @@ namespace Nice.DataAccess.DAL
         /// <param name="parmsValue"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        IList<T> GetListBySQL(string cmdText, object[] parmsValue, PageInfo page);
+        IList<T> GetListBySQL(string cmdText, IList<object> parmsValue, PageInfo page);
     }
 
     public interface IQueryDAL
@@ -40,14 +40,14 @@ namespace Nice.DataAccess.DAL
         /// <param name="cmdText"></param>
         /// <param name="parmsValue"></param>
         /// <returns></returns>
-        int ExecuteNonQuery(string cmdText, object[] parmsValue);
+        int ExecuteNonQuery(string cmdText, IList<object> parmsValue);
         /// <summary>
         /// 执行SQL返回第一行第一列
         /// </summary>
         /// <param name="cmdText"></param>
         /// <param name="parmsValue"></param>
         /// <returns></returns>
-        object ExecuteScalar(string cmdText, object[] parmsValue);
+        object ExecuteScalar(string cmdText, IList<object> parmsValue);
 
         /// <summary>
         /// 执行SQL事务
@@ -55,7 +55,7 @@ namespace Nice.DataAccess.DAL
         /// <param name="cmdText"></param>
         /// <param name="parmsValue"></param>
         /// <returns></returns>
-        int ExecuteNonQuery(string[] cmdText, object[][] parmsValue);
+        int ExecuteNonQuery(string[] cmdText, IList<IList<object>> parmsValue);
 
         /// <summary>
         /// 返回Dataset
