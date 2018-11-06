@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("Nice.DataAccess.MySQL")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("C#轻量级ORM")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("nicecodeclub")]
 [assembly: AssemblyProduct("http://www.nicecode.club/")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
