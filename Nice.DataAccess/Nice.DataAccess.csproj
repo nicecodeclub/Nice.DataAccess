@@ -4,10 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
    <Authors>nicecode.club</Authors>
-   <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+   <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+   <PackageVersion>1.0.0.1</PackageVersion>
    <PackageProjectUrl>https://github.com/nicecodeclub/Nice.DataAccess</PackageProjectUrl>
    <PackageLicenseUrl>https://github.com/nicecodeclub/Nice.DataAccess/blob/master/LICENSE</PackageLicenseUrl>
    <PackageTags>Nice.DataAccess</PackageTags>
+   <PackageReleaseNotes>micro ORM ,simplify data access while ensuring high performance.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

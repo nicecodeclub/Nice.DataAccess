@@ -642,7 +642,7 @@ namespace Nice.DataAccess.DAL
             ExpressionHandling(cmdText, expression, parms);
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
                 parms.Add(filterValid.ParamFilterValid);
             }
             DataTable dt = DataHelper.ExecuteDataTable(cmdText.ToString(), CommandType.Text, parms.ToArray());
