@@ -7,7 +7,7 @@
     <Authors>nicecode.club</Authors>
     <PackageProjectUrl>https://github.com/nicecodeclub/Nice.DataAccess/tree/master/Nice.DataAccess.MySql</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/nicecodeclub/Nice.DataAccess/blob/master/LICENSE</PackageLicenseUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <PackageTags>Nice.DataAccess.MySql</PackageTags>
     <PackageReleaseNotes>micro ORM ,simplify data access while ensuring high performance.</PackageReleaseNotes>
   </PropertyGroup>

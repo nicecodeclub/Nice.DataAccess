@@ -6,7 +6,7 @@
    <Authors>nicecode.club</Authors>
    <PackageLicenseUrl>https://github.com/nicecodeclub/Nice.DataAccess/blob/master/LICENSE</PackageLicenseUrl>
    <PackageProjectUrl>https://github.com/nicecodeclub/Nice.DataAccess/tree/master/Nice.DataAccess.MsSql</PackageProjectUrl>
-   <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+   <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
    <PackageReleaseNotes>micro ORM ,simplify data access while ensuring high performance.</PackageReleaseNotes>
   </PropertyGroup>
 
