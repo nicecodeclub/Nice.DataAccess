@@ -1,5 +1,10 @@
 # Nice.DataAccess
  
+
+Nuget Package Manager   
+
+    Install-Package Nice.DataAccess -Version x.x.x      
+            
  1、程序启动，创建数据库操作对象
     
     
@@ -71,5 +76,9 @@
      public IList<UserInfo> GetList(PageInfo page)
      {
         return dal.GetList(page);
-     }         
+     }
+     public bool IsExists(string PropertyName, object PropertyValue, object IdValue)
+     {
+         return dal.IsExist(PropertyName, PropertyValue, IdValue);
+     }
      
