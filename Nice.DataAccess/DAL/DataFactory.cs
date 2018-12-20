@@ -31,7 +31,7 @@ namespace Nice.DataAccess.DAL
     {
         public static IQueryDAL Create(string connStrKey)
         {
-            return DataUtil.GetAssembly(connStrKey).CreateInstance(DataUtil.GetSettings(connStrKey).DataFactoryQueryDAL) as IQueryDAL;
+            return DataUtil.GetAssembly(connStrKey).CreateInstance(DataUtil.GetSettings(connStrKey).DataFactoryQueryDAL, false, BindingFlags.Default, null, new string[] { connStrKey }, null, null) as IQueryDAL;
         }
     }
 

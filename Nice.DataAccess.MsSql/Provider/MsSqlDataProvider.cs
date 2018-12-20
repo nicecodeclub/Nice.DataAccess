@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -24,7 +25,7 @@ namespace Nice.DataAccess.MsSql.Provider
         {
             return new SqlCommand();
         }
-        public override void AttachParameters(IDbCommand command, IDataParameter[] dbps)
+        public override void AttachParameters(IDbCommand command, IList<IDataParameter> dbps)
         {
             command.Parameters.Clear();
             foreach (IDataParameter p in dbps)

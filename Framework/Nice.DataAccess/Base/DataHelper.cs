@@ -2,6 +2,7 @@
 using Nice.DataAccess.Exceptions;
 using Nice.DataAccess.Transactions;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Reflection;
@@ -63,13 +64,32 @@ namespace Nice.DataAccess
             return dataProvider.GetConnection();
         }
         /// <summary>
-        /// 执行IDbCommand类的ExecuteNonQuery方法，返回受影响的行数
+        /// 执行ExecuteNonQuery方法，返回受影响的行数
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <returns>返回受影响的行数，失败返回0</returns>
+        public int ExecuteNonQuery(string cmdText)
+        {
+            return ExecuteNonQuery(cmdText, CommandType.Text, null);
+        }
+        /// <summary>
+        /// 执行ExecuteNonQuery方法，返回受影响的行数
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <param name="dbps">sql语句需要的参数</param>
+        /// <returns>返回受影响的行数，失败返回0</returns>
+        public int ExecuteNonQuery(string cmdText, IList<IDataParameter> dbps)
+        {
+            return ExecuteNonQuery(cmdText, CommandType.Text, dbps);
+        }
+        /// <summary>
+        /// 执行ExecuteNonQuery方法，返回受影响的行数
         /// </summary>
         /// <param name="cmdText">需要执行的sql语句</param>
         /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
-        /// <param name="commandType">执行方式，默认CommandType.Text</param>
+        /// <param name="commandType">执行方式</param>
         /// <returns>返回受影响的行数，失败返回0</returns>
-        public int ExecuteNonQuery(string cmdText, CommandType commandType = CommandType.Text, params IDataParameter[] dbps)
+        public int ExecuteNonQuery(string cmdText, CommandType commandType, IList<IDataParameter> dbps)
         {
             IDbConnection connection = null;
             try
@@ -112,15 +132,33 @@ namespace Nice.DataAccess
                 }
             }
         }
-
         /// <summary>
-        /// 执行IDbCommand类的ExecuteScalar方法,返回object
+        /// 执行ExecuteScalar方法,返回object
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <returns>返回object类型数据，失败返回null</returns>
+        public object ExecuteScalar(string cmdText)
+        {
+            return ExecuteScalar(cmdText, CommandType.Text, null);
+        }
+        /// <summary>
+        /// 执行ExecuteScalar方法,返回object
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <param name="dbps">sql语句需要的参数</param>
+        /// <returns>返回object类型数据，失败返回null</returns>
+        public object ExecuteScalar(string cmdText, IList<IDataParameter> dbps)
+        {
+            return ExecuteScalar(cmdText, CommandType.Text, dbps);
+        }
+        /// <summary>
+        /// 执行ExecuteScalar方法,返回object
         /// </summary>
         /// <param name="cmdText">需要执行的sql语句</param>
         /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
-        /// <param name="commandType">执行方式，默认CommandType.Text</param>
+        /// <param name="commandType">执行方式</param>
         /// <returns>返回object类型数据，失败返回null</returns>
-        public object ExecuteScalar(string cmdText, CommandType commandType = CommandType.Text, params IDataParameter[] dbps)
+        public object ExecuteScalar(string cmdText, CommandType commandType, IList<IDataParameter> dbps)
         {
             IDbConnection connection = null;
             try
@@ -156,13 +194,32 @@ namespace Nice.DataAccess
             }
         }
         /// <summary>
-        /// 执行IDbCommand类的ExecuteScalar方法,返回object
+        /// 执行ExecuteScalar方法,返回T
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <returns>返回指定类型数据，失败返回null</returns>
+        public T ExecuteScalar<T>(string cmdText)
+        {
+            return ExecuteScalar<T>(cmdText, CommandType.Text, null);
+        }
+        /// <summary>
+        /// 执行ExecuteScalar方法,返回T
         /// </summary>
         /// <param name="cmdText">需要执行的sql语句</param>
         /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
-        /// <param name="commandType">执行方式，默认CommandType.Text</param>
-        /// <returns>返回object类型数据，失败返回null</returns>
-        public T ExecuteScalar<T>(string cmdText, CommandType commandType = CommandType.Text, params IDataParameter[] dbps)
+        /// <returns>返回指定类型数据，失败返回null</returns>
+        public T ExecuteScalar<T>(string cmdText, IList<IDataParameter> dbps)
+        {
+            return ExecuteScalar<T>(cmdText, CommandType.Text, dbps);
+        }
+        /// <summary>
+        /// 执行ExecuteScalar方法,返回T
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
+        /// <param name="commandType">执行方式</param>
+        /// <returns>返回指定类型数据，失败返回null</returns>
+        public T ExecuteScalar<T>(string cmdText, CommandType commandType, IList<IDataParameter> dbps)
         {
             object value = ExecuteScalar(cmdText, commandType, dbps);
             if (value == null)
@@ -170,14 +227,35 @@ namespace Nice.DataAccess
             return (T)Convert.ChangeType(value, typeof(T));
         }
         /// <summary>
-        /// 执行IDbCommand类的ExecuteReader方法,返回SqlDataReader
+        /// 执行ExecuteReader方法,返回SqlDataReader
+        /// [调用完成后，请关闭IDataReader对象]
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <returns>返回SqlDataReader</returns>
+        public IDataReader ExecuteReader(string cmdText)
+        {
+            return ExecuteReader(cmdText, CommandType.Text, null);
+        }
+        /// <summary>
+        /// 执行ExecuteReader方法,返回SqlDataReader
         /// [调用完成后，请关闭IDataReader对象]
         /// </summary>
         /// <param name="cmdText">需要执行的sql语句</param>
         /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
-        /// <param name="commandType">执行方式，默认CommandType.Text</param>
         /// <returns>返回SqlDataReader</returns>
-        public IDataReader ExecuteReader(string cmdText, CommandType commandType = CommandType.Text, params IDataParameter[] dbps)
+        public IDataReader ExecuteReader(string cmdText, IDataParameter[] dbps)
+        {
+            return ExecuteReader(cmdText, CommandType.Text, dbps);
+        }
+        /// <summary>
+        /// 执行ExecuteReader方法,返回SqlDataReader
+        /// [调用完成后，请关闭IDataReader对象]
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
+        /// <param name="commandType">执行方式</param>
+        /// <returns>返回SqlDataReader</returns>
+        public IDataReader ExecuteReader(string cmdText, CommandType commandType, IDataParameter[] dbps)
         {
             IDbCommand cmd = null;
             try
@@ -209,14 +287,34 @@ namespace Nice.DataAccess
             //    cmd.Connection.Dispose();
             //}
         }
+
+        /// <summary>
+        /// 执行DataSet.Fill,返回DataSet
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <returns></returns>
+        public DataSet ExecuteDataSet(string cmdText)
+        {
+            return ExecuteDataSet(cmdText, CommandType.Text, null);
+        }
         /// <summary>
         /// 执行DataSet.Fill,返回DataSet
         /// </summary>
         /// <param name="cmdText">需要执行的sql语句</param>
         /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
-        /// <param name="commandType">执行方式，默认CommandType.Text</param>
         /// <returns></returns>
-        public DataSet ExecuteDataSet(string cmdText, CommandType commandType = CommandType.Text, params IDataParameter[] dbps)
+        public DataSet ExecuteDataSet(string cmdText, IDataParameter[] dbps)
+        {
+            return ExecuteDataSet(cmdText, CommandType.Text, dbps);
+        }
+        /// <summary>
+        /// 执行DataSet.Fill,返回DataSet
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
+        /// <param name="commandType">执行方式</param>
+        /// <returns></returns>
+        public DataSet ExecuteDataSet(string cmdText, CommandType commandType, IDataParameter[] dbps)
         {
             IDbConnection connection = null;
             try
@@ -256,13 +354,32 @@ namespace Nice.DataAccess
             }
         }
         /// <summary>
+        /// 执行DataSet.Fill,DataTable
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <returns></returns>
+        public DataTable ExecuteDataTable(string cmdText)
+        {
+            return ExecuteDataTable(cmdText, CommandType.Text, null);
+        }
+        /// <summary>
+        /// 执行DataSet.Fill,DataTable
+        /// </summary>
+        /// <param name="cmdText">需要执行的sql语句</param>
+        /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
+        /// <returns></returns>
+        public DataTable ExecuteDataTable(string cmdText, IDataParameter[] dbps)
+        {
+            return ExecuteDataTable(cmdText, CommandType.Text, dbps);
+        }
+        /// <summary>
         /// 执行DataSet.Fill,返回DataSet
         /// </summary>
         /// <param name="cmdText">需要执行的sql语句</param>
         /// <param name="dbps">sql语句需要的参数，没有参数则传入null</param>
-        /// <param name="commandType">执行方式，默认CommandType.Text</param>
+        /// <param name="commandType">执行方式</param>
         /// <returns></returns>
-        public DataTable ExecuteDataTable(string cmdText, CommandType commandType = CommandType.Text, params IDataParameter[] dbps)
+        public DataTable ExecuteDataTable(string cmdText, CommandType commandType, IDataParameter[] dbps)
         {
             IDbConnection connection = null;
             try
@@ -375,7 +492,7 @@ namespace Nice.DataAccess
         /// <param name="trans"></param>
         /// <param name="dbps"></param>
         /// <returns></returns>
-        public int ExecuteNonQuery(string cmdText, IDbTransaction trans, CommandType commandType = CommandType.Text, params IDataParameter[] dbps)
+        public int ExecuteNonQuery(string cmdText, IDbTransaction trans, CommandType commandType, IDataParameter[] dbps)
         {
             IDbConnection connection = trans.Connection;
             IDbCommand cmd = connection.CreateCommand();

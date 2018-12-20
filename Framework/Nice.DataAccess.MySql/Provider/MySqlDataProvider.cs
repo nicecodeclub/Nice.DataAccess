@@ -1,6 +1,7 @@
 ﻿
 using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace Nice.DataAccess.MySql.Provider
@@ -24,7 +25,7 @@ namespace Nice.DataAccess.MySql.Provider
         {
             return new MySqlCommand();
         }
-        public override void AttachParameters(IDbCommand command, IDataParameter[] dbps)
+        public override void AttachParameters(IDbCommand command, IList<IDataParameter> dbps)
         {
             command.Parameters.Clear();
             foreach (IDataParameter p in dbps)

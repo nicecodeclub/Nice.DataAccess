@@ -62,8 +62,6 @@
     <Compile Include="DAL\implement\GeneralDAL.cs" />
     <Compile Include="DAL\implement\QueryDAL.cs" />
     <Compile Include="DAL\QueryBaseDAL.cs" />
-    <Compile Include="Emit\FactoryHelper.cs" />
-    <Compile Include="Emit\FastMethodFactory.cs" />
     <Compile Include="Exceptions\DbExcuteException.cs" />
     <Compile Include="Exceptions\IdNotImplementedException.cs" />
     <Compile Include="Models\FilterValid.cs" />
@@ -80,7 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Attributes\Entity\" />
-    <Folder Include="DataAccess\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

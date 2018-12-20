@@ -1,6 +1,7 @@
 ﻿
 using Npgsql;
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace Nice.DataAccess.Npgsql.Provider
@@ -24,7 +25,7 @@ namespace Nice.DataAccess.Npgsql.Provider
         {
             return new NpgsqlCommand();
         }
-        public override void AttachParameters(IDbCommand command, IDataParameter[] dbps)
+        public override void AttachParameters(IDbCommand command, IList<IDataParameter> dbps)
         {
             command.Parameters.Clear();
             foreach (IDataParameter p in dbps)
