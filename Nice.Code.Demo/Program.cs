@@ -16,11 +16,14 @@ namespace Nice.Code.Demo
                .SetBasePath(AppContext.BaseDirectory)
                .AddJsonFile("appsettings.json", true, true);
             IConfigurationRoot Configuration = builder.Build();
-            DatabaseConfig config = new DatabaseConfig();
-            config.ConnString = Configuration["ConnString"];
-            config.ProviderName = Configuration["ProviderName"];
 
-            DataUtil.Create(config);
+
+            DataUtil.Create(new DatabaseConfig()
+            {
+                ConnString = Configuration["ConnString"],
+                ProviderName = Configuration["ProviderName"]
+            });
+
             rp = new UserInfoRepository();
             TestInsert();
             TestUpdate();
@@ -57,11 +60,11 @@ namespace Nice.Code.Demo
                 userInfo.ModifyTime = DateTime.Now;
                 bool result = rp.Update(userInfo);
                 Console.WriteLine("修改用户{0}", result ? "成功" : "失败");
-                userInfo = rp.Get(o => o.UserName == userInfo.UserName);
+                userInfo = rp.GetByName(userInfo.UserName);
                 if (userInfo != null)
                 {
                     userInfo.UserName = "sssss";
-                    userInfo.ModifyTime= DateTime.Now;
+                    userInfo.ModifyTime = DateTime.Now;
                     result = rp.Update(userInfo, new string[] { "UserName", "ModifyTime" });
                     Console.WriteLine("修改用户{0}", result ? "成功" : "失败");
                 }

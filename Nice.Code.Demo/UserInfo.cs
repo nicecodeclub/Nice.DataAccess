@@ -24,6 +24,7 @@ namespace Nice.Code.Demo
         public string CreateUserId { get; set; }
         public string ModifyUserId { get; set; }
         [Valid(1, 0)]
+        [Column(Name ="nState")]
         public byte NState { get; set; }
         [Column(IsReadOnly = true)]
         public bool IsReserve { get; set; }
