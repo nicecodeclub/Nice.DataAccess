@@ -3,12 +3,14 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PackageVersion>1.0.0.1</PackageVersion>
+    <PackageVersion>1.0.0.3</PackageVersion>
     <Authors>nicecode.club</Authors>
     <PackageProjectUrl>https://github.com/nicecodeclub/Nice.DataAccess/tree/master/Nice.DataAccess.Npgsql</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/nicecodeclub/Nice.DataAccess/blob/master/LICENSE</PackageLicenseUrl>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageReleaseNotes>micro ORM ,simplify data access while ensuring high performance.</PackageReleaseNotes>
+   <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageTags>Nice.DataAccess.Npgsql</PackageTags>
+   <Description>micro ORM ,simplify data access while ensuring high performance.</Description>
+   <PackageReleaseNotes>1.0.0.3</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

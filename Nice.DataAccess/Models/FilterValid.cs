@@ -22,5 +22,11 @@ namespace Nice.DataAccess.Models
             get { return validColumnName; }
             set { validColumnName = value; }
         }
+        private string propertyName;
+        public string PropertyName
+        {
+            get { return propertyName; }
+            set { propertyName = value; }
+        }
     }
 }

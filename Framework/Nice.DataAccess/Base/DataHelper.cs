@@ -456,7 +456,7 @@ namespace Nice.DataAccess
                     count += cmd.ExecuteNonQuery();
 
                 }
-                if (trans != null)
+                if (trans != null && Transaction.Current == null)
                     trans.Commit();
                 return count;
             }

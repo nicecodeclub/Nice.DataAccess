@@ -146,6 +146,7 @@ namespace Nice.DataAccess.DAL
                 filterValid.ParamFilterValid = DataHelper.CreateParameter(string.Format("{0}{1}", DataHelper.GetParameterPrefix(), pi.Name), validAttri.Available);
                 filterValid.ParamFilterInValid = DataHelper.CreateParameter(string.Format("{0}{1}", DataHelper.GetParameterPrefix(), pi.Name), validAttri.Invalid);
                 filterValid.ValidColumnName = columnName;
+                filterValid.PropertyName = pi.Name;
             }
         }
 
@@ -171,7 +172,7 @@ namespace Nice.DataAccess.DAL
                 if (IdColomn.IdProperty.Name == pi.Name && IdColomn.GenerateType != IdGenerateType.Assign)
                     continue;
                 sbColumn.AppendFormat("{0}{1},", DataHelper.GetParameterPrefix(), pi.Name);
-                parms.Add(DataHelper.CreateParameter(DataHelper.GetParameterPrefix() + pi.Name, pi.GetValue(t)));
+                parms.Add(DataHelper.CreateParameter(string.Format("{0}{1}", DataHelper.GetParameterPrefix(), pi.Name), pi.GetValue(t)));
             }
         }
         private void PrepareUpdate(T t, out string cmdText, IList<IDataParameter> parms)
@@ -179,7 +180,7 @@ namespace Nice.DataAccess.DAL
             string IdColomnName = IdColomn.ColomnName;
             object IdValue = IdColomn.IdProperty.GetValue(t, null);
             string IdPropertyName = IdColomn.IdProperty.Name;
-            parms.Add(DataHelper.CreateParameter(DataHelper.GetParameterPrefix() + IdColomnName, IdValue));
+            parms.Add(DataHelper.CreateParameter(string.Format("{0}{1}", DataHelper.GetParameterPrefix(), IdPropertyName), IdValue));
             PropertyInfo pi = null;
             for (int i = 0; i < tableProperties.Length; i++)
             {
@@ -193,7 +194,7 @@ namespace Nice.DataAccess.DAL
                     }
                 }
             }
-            cmdText = string.Format("UPDATE {0} SET {1} WHERE {2}={3}{4}", TableName, SetColumnText, IdColomnName, DataHelper.GetParameterPrefix(), IdColomnName);
+            cmdText = string.Format("UPDATE {0} SET {1} WHERE {2}={3}{4}", TableName, SetColumnText, IdColomnName, DataHelper.GetParameterPrefix(), IdPropertyName);
         }
         private void PrepareUpdate(T t, StringBuilder cmdText, IList<string> properties, IList<IDataParameter> parms)
         {
@@ -231,14 +232,16 @@ namespace Nice.DataAccess.DAL
         }
         private void PrepareDelete(object idValue, out string cmdText, out IDataParameter[] parms)
         {
-            parms = new IDataParameter[] { DataHelper.CreateParameter(DataHelper.GetParameterPrefix() + IdColomn.ColomnName, idValue) };
-            cmdText = string.Format("delete from {0} where {1}={2}{1}", TableName, IdColomn.ColomnName, DataHelper.GetParameterPrefix());
+            string IdParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), IdColomn.IdProperty.Name);
+            parms = new IDataParameter[] { DataHelper.CreateParameter(IdParameterName, idValue) };
+            cmdText = string.Format("delete from {0} where {1}={2}", TableName, IdColomn.ColomnName, IdParameterName);
         }
 
         private void PrepareVirtualDelete(object idValue, out string cmdText, out IDataParameter[] parms)
         {
-            parms = new IDataParameter[] { DataHelper.CreateParameter(DataHelper.GetParameterPrefix() + IdColomn.ColomnName, idValue), filterValid.ParamFilterInValid };
-            cmdText = string.Format("UPDATE {0} SET {2}={3}{2} WHERE {1}={3}{1}", TableName, IdColomn.ColomnName, filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+            string IdParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), IdColomn.IdProperty.Name);
+            parms = new IDataParameter[] { DataHelper.CreateParameter(IdParameterName, idValue), filterValid.ParamFilterInValid };
+            cmdText = string.Format("UPDATE {0} SET {1}={2}{3} WHERE {4}={5}", TableName, filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName, IdColomn.ColomnName, IdParameterName);
         }
 
         private T Get(StringBuilder cmdText, IList<IDataParameter> parms)
@@ -492,10 +495,10 @@ namespace Nice.DataAccess.DAL
             StringBuilder cmdText = new StringBuilder();
             cmdText.AppendFormat(" UPDATE {0} SET ", TableName);
             PrepareUpdate(t, cmdText, properties, parms);
-            string IdColomnName = IdColomn.ColomnName;
-            cmdText.AppendFormat(" WHERE {0}={1}{0}", IdColomnName, DataHelper.GetParameterPrefix());
+            string IdParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), IdColomn.IdProperty.Name);
+            cmdText.AppendFormat(" WHERE {0}={1}", IdColomn.ColomnName, IdParameterName);
             object IdValue = IdColomn.IdProperty.GetValue(t, null);
-            parms.Add(DataHelper.CreateParameter(DataHelper.GetParameterPrefix() + IdColomnName, IdValue));
+            parms.Add(DataHelper.CreateParameter(IdParameterName, IdValue));
 
             return DataHelper.ExecuteNonQuery(cmdText.ToString(), CommandType.Text, parms.ToArray()) > 0;
         }
@@ -507,8 +510,8 @@ namespace Nice.DataAccess.DAL
             IList<PropertyInfo> filterProperties = new List<PropertyInfo>();
             cmdSql.Append(" UPDATE {0} SET ");
             PrepareUpdateSql(properties, cmdSql, filterProperties);
-            string IdColomnName = IdColomn.ColomnName;
-            cmdSql.AppendFormat(" WHERE {0}={1}{0}", IdColomnName, DataHelper.GetParameterPrefix());
+            string IdParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), IdColomn.IdProperty.Name);
+            cmdSql.AppendFormat(" WHERE {0}={1}", IdColomn.ColomnName, IdParameterName);
 
             string strSql = cmdSql.ToString();
             string[] cmdText = new string[list.Count];
@@ -523,7 +526,7 @@ namespace Nice.DataAccess.DAL
                 dbs.Clear();
                 PrepareParameters(t, filterProperties, dbs);
                 object IdValue = IdColomn.IdProperty.GetValue(t, null);
-                dbs.Add(DataHelper.CreateParameter(DataHelper.GetParameterPrefix() + IdColomnName, IdValue));
+                dbs.Add(DataHelper.CreateParameter(IdParameterName, IdValue));
                 dbps[i] = dbs.ToArray();
             }
             return DataHelper.ExecuteNonQuery(cmdText.ToString(), CommandType.Text, parms.ToArray()) > 0;
@@ -553,12 +556,13 @@ namespace Nice.DataAccess.DAL
         public T Get(object IdValue)
         {
             IList<IDataParameter> parms = new List<IDataParameter>();
+            string IdParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), IdColomn.IdProperty.Name);
             StringBuilder cmdText = new StringBuilder(50);
-            cmdText.AppendFormat(" SELECT {0} FROM {1} {2} WHERE {2}.{3}={4}{3}", GetColumnText, TableName, ClassName, IdColomn.ColomnName, DataHelper.GetParameterPrefix());
-            parms.Add(DataHelper.CreateParameter(DataHelper.GetParameterPrefix() + IdColomn.ColomnName, IdValue));
+            cmdText.AppendFormat(" SELECT {0} FROM {1} {2} WHERE {2}.{3}={4}", GetColumnText, TableName, ClassName, IdColomn.ColomnName, IdParameterName);
+            parms.Add(DataHelper.CreateParameter(IdParameterName, IdValue));
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" AND {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 parms.Add(filterValid.ParamFilterValid);
             }
             return Get(cmdText, parms);
@@ -572,7 +576,7 @@ namespace Nice.DataAccess.DAL
             ExpressionHandling(cmdText, expression, parms);
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" AND {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 parms.Add(filterValid.ParamFilterValid);
             }
             return Get(cmdText, parms);
@@ -589,7 +593,7 @@ namespace Nice.DataAccess.DAL
             IDataParameter[] parms = null;
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" WHERE {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" WHERE {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 parms = new IDataParameter[] { filterValid.ParamFilterValid };
             }
             DataTable dt = DataHelper.ExecuteDataTable(cmdText.ToString(), CommandType.Text, parms);
@@ -610,7 +614,7 @@ namespace Nice.DataAccess.DAL
             IDataParameter[] parms = null;
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" WHERE {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" WHERE {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 parms = new IDataParameter[] { filterValid.ParamFilterValid };
             }
             if (page != null)
@@ -620,7 +624,7 @@ namespace Nice.DataAccess.DAL
                 cmdText.AppendFormat(" SELECT COUNT(1) FROM {0}", TableName);
                 if (filterValid != null)
                 {
-                    cmdText.AppendFormat(" WHERE {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                    cmdText.AppendFormat(" WHERE {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 }
                 cmdText.AppendFormat(";");
             }
@@ -642,7 +646,7 @@ namespace Nice.DataAccess.DAL
             ExpressionHandling(cmdText, expression, parms);
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" AND {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 parms.Add(filterValid.ParamFilterValid);
             }
             DataTable dt = DataHelper.ExecuteDataTable(cmdText.ToString(), CommandType.Text, parms.ToArray());
@@ -661,7 +665,7 @@ namespace Nice.DataAccess.DAL
             cmdText.Append(whereText);
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" AND {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 parms.Add(filterValid.ParamFilterValid);
             }
             if (page != null)
@@ -671,7 +675,7 @@ namespace Nice.DataAccess.DAL
                 cmdText.AppendFormat(" SELECT COUNT(1) FROM {0} WHERE {1}", TableName, whereText);
                 if (filterValid != null)
                 {
-                    cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                    cmdText.AppendFormat(" AND {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 }
                 cmdText.AppendFormat(";");
             }
@@ -785,12 +789,13 @@ namespace Nice.DataAccess.DAL
             string colunmName = propertyAndColumn[PropertyName.ToUpper()];
             if (string.IsNullOrEmpty(colunmName)) throw new NotImplementedException("指定属性名不存在");
             IList<IDataParameter> parms = new List<IDataParameter>();
-            parms.Add(DataHelper.CreateParameter("@" + colunmName, PropertyValue));
+            string IdParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), IdColomn.IdProperty.Name);
+            parms.Add(DataHelper.CreateParameter(string.Format("{0}{1}", DataHelper.GetParameterPrefix(), colunmName), PropertyValue));
             StringBuilder cmdText = new StringBuilder();
-            cmdText.AppendFormat("select {0} from {1} where {2}={3}{2}", IdColomn.ColomnName, TableName, colunmName, DataHelper.GetParameterPrefix());
+            cmdText.AppendFormat("select {0} from {1} where {2}={3}", IdColomn.ColomnName, TableName, colunmName, IdParameterName);
             if (filterValid != null)
             {
-                cmdText.AppendFormat(" AND {0}={1}{0}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix());
+                cmdText.AppendFormat(" AND {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 parms.Add(filterValid.ParamFilterValid);
             }
             object obj = DataHelper.ExecuteScalar(cmdText.ToString(), CommandType.Text, parms.ToArray());

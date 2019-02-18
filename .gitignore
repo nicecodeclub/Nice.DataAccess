@@ -234,3 +234,5 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+/Nice.DataAccess/DAL/QueryUnionDAL.cs
+/Nice.DataAccess/DAL/LeftJoin.cs
