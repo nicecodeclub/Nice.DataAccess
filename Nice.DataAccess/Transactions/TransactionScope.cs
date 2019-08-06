@@ -55,5 +55,30 @@ namespace Nice.DataAccess.Transactions
                 committableTransaction.Dispose();
             }
         }
+
+
+        public static bool Excute(Action action)
+        {
+            return Excute(action, DataUtil.DefaultConnStringKey);
+        }
+
+        public static bool Excute(Action action, string connStriKey)
+        {
+            bool result = false;
+            using (TransactionScope transactionScope = new TransactionScope(connStriKey))
+            {
+                try
+                {
+                    action();
+                    transactionScope.Complete();
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            };
+            return result;
+        }
     }
 }

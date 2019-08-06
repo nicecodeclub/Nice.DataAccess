@@ -28,6 +28,7 @@ namespace Nice.DataAccess.Transactions
                 Transaction.Current = transaction.DependentClone();
             }
         }
+
         private bool isCompleted;
         public bool IsCompleted
         {
@@ -54,6 +55,30 @@ namespace Nice.DataAccess.Transactions
                 }
                 committableTransaction.Dispose();
             }
+        }
+
+        public static bool Excute(Action action)
+        {
+            return Excute(action, DataUtil.DefaultConnStringKey);
+        }
+
+        public static bool Excute(Action action, string connStriKey)
+        {
+            bool result = false;
+            using (TransactionScope transactionScope = new TransactionScope(connStriKey))
+            {
+                try
+                {
+                    action();
+                    transactionScope.Complete();
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+            };
+            return result;
         }
     }
 }

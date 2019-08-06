@@ -222,7 +222,7 @@ namespace Nice.DataAccess
         public T ExecuteScalar<T>(string cmdText, CommandType commandType, IList<IDataParameter> dbps)
         {
             object value = ExecuteScalar(cmdText, commandType, dbps);
-            if (value == null)
+            if (value == null || value == DBNull.Value)
                 return default(T);
             return (T)Convert.ChangeType(value, typeof(T));
         }

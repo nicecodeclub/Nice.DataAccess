@@ -789,10 +789,10 @@ namespace Nice.DataAccess.DAL
             string colunmName = propertyAndColumn[PropertyName.ToUpper()];
             if (string.IsNullOrEmpty(colunmName)) throw new NotImplementedException("指定属性名不存在");
             IList<IDataParameter> parms = new List<IDataParameter>();
-            string IdParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), IdColomn.IdProperty.Name);
-            parms.Add(DataHelper.CreateParameter(string.Format("{0}{1}", DataHelper.GetParameterPrefix(), colunmName), PropertyValue));
+            string parameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), colunmName);
+            parms.Add(DataHelper.CreateParameter(parameterName, PropertyValue));
             StringBuilder cmdText = new StringBuilder();
-            cmdText.AppendFormat("select {0} from {1} where {2}={3}", IdColomn.ColomnName, TableName, colunmName, IdParameterName);
+            cmdText.AppendFormat("select {0} from {1} where {2}={3}", IdColomn.ColomnName, TableName, colunmName, parameterName);
             if (filterValid != null)
             {
                 cmdText.AppendFormat(" AND {0}={1}{2}", filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
