@@ -2,6 +2,7 @@
 
 using Nice.DataAccess.Model.Page;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Nice.DataAccess.DAL
 {
@@ -20,9 +21,14 @@ namespace Nice.DataAccess.DAL
             return dal.GetBySQL(cmdText);
         }
 
-        public T GetBySQL(string cmdText, IList<object> parmsValue)
+        public T GetBySQL(string cmdText, IList<IDataParameter> parms)
         {
-            return dal.GetBySQL(cmdText, parmsValue);
+            return dal.GetBySQL(cmdText, parms);
+        }
+
+        public T GetBySQL2(string cmdText, IList<object> parmsValue)
+        {
+            return dal.GetBySQL2(cmdText, parmsValue);
         }
 
         public IList<T> GetListBySQL(string cmdText)
@@ -35,15 +41,24 @@ namespace Nice.DataAccess.DAL
             return dal.GetListBySQL(cmdText, page);
         }
 
-        public IList<T> GetListBySQL(string cmdText, IList<object> parmsValue)
+        public IList<T> GetListBySQL(string cmdText, IList<IDataParameter> parms)
         {
-            return dal.GetListBySQL(cmdText, parmsValue);
-        }
-        public IList<T> GetListBySQL(string cmdText, IList<object> parmsValue, PageInfo page)
-        {
-            return dal.GetListBySQL(cmdText, parmsValue, page);
+            return dal.GetListBySQL(cmdText, parms);
         }
 
+        public IList<T> GetListBySQL(string cmdText, IList<IDataParameter> parms, PageInfo page)
+        {
+            return dal.GetListBySQL(cmdText, parms, page);
+        }
+
+        public IList<T> GetListBySQL2(string cmdText, IList<object> parmsValue)
+        {
+            return dal.GetListBySQL2(cmdText, parmsValue);
+        }
+        public IList<T> GetListBySQL2(string cmdText, IList<object> parmsValue, PageInfo page)
+        {
+            return dal.GetListBySQL2(cmdText, parmsValue, page);
+        }
     }
 
     public class QueryDAL

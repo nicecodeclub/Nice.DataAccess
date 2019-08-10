@@ -137,6 +137,35 @@ namespace Nice.DataAccess
             index++;
         }
 
+        public static string GetPropertyName<T>(Expression<Func<T, object>> expression)
+        {
+            MemberExpression memberExpression = expression.Body as MemberExpression;
+            if (memberExpression != null)
+            {
+                return memberExpression.Member.Name;
+            }
+            return string.Empty;
+        }
+
+        public static IList<string> GetPropertyNames<T>(params Expression<Func<T, object>>[] expressions)
+        {
+            IList<string> properties = new List<string>();
+            if (expressions == null) return properties;
+            MemberExpression memberExpression = null;
+            foreach (Expression<Func<T, object>> expression in expressions)
+            {
+                memberExpression = expression.Body as MemberExpression;
+                if (memberExpression != null)
+                {
+                    properties.Add(memberExpression.Member.Name);
+                }
+                else
+                {
+                    properties.Add(string.Empty);
+                }
+            }
+            return properties;
+        }
     }
 
     public class DataParameter

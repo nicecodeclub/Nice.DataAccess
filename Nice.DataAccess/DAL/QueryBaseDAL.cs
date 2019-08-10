@@ -109,12 +109,10 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="IdValue">主键</param>
         /// <returns></returns>
-        public T GetBySQL(string cmdText, IList<object> parmsValue)
+
+        public T GetBySQL(string cmdText, IList<IDataParameter> parms)
         {
             T t = default(T);
-            IDataParameter[] parms = null;
-            if (parmsValue != null)
-                FilterSQLParmeters(ref cmdText, parmsValue, ref parms);
             DataTable dt = DataHelper.ExecuteDataTable(cmdText, CommandType.Text, parms);
             if (dt != null && dt.Rows.Count > 0)
             {
@@ -136,14 +134,26 @@ namespace Nice.DataAccess.DAL
             return t;
         }
         /// <summary>
+        /// SQL查询对象
+        /// </summary>
+        /// <param name="IdValue">主键</param>
+        /// <returns></returns>
+        public T GetBySQL2(string cmdText, IList<object> parmsValue)
+        {
+            T t = default(T);
+            IDataParameter[] parms = null;
+            if (parmsValue != null)
+                FilterSQLParmeters(ref cmdText, parmsValue, ref parms);
+            return GetBySQL(cmdText, parms);
+        }
+        /// <summary>
         /// SQL查询列表
         /// </summary>
         /// <param name="IdValue">主键</param>
         /// <returns></returns>
         public IList<T> GetListBySQL(string cmdText)
         {
-            DataTable dt = DataHelper.ExecuteDataTable(cmdText, CommandType.Text, null);
-            return GetList(dt);
+            return GetList(DataHelper.ExecuteDataTable(cmdText, CommandType.Text, null));
         }
         /// <summary>
         /// SQL查询列表
@@ -154,17 +164,11 @@ namespace Nice.DataAccess.DAL
         {
             return GetListBySQL(cmdText, null, page);
         }
-        /// <summary>
-        /// SQL查询列表
-        /// </summary>
-        /// <param name="cmdText">SQL</param>
-        /// <returns></returns>
-        public IList<T> GetListBySQL(string cmdText, IList<object> parmsValue, PageInfo page)
+       
+
+        public IList<T> GetListBySQL(string cmdText, IList<IDataParameter> parms, PageInfo page)
         {
             IList<T> result = null;
-            IDataParameter[] parms = null;
-            if (parmsValue != null)
-                FilterSQLParmeters(ref cmdText, parmsValue, ref parms);
             StringBuilder sb = new StringBuilder(100);
             sb.AppendFormat(cmdText);
             if (page != null)
@@ -181,19 +185,37 @@ namespace Nice.DataAccess.DAL
             }
             return result;
         }
+
+        public IList<T> GetListBySQL(string cmdText, IList<IDataParameter> parms)
+        {
+            DataTable dt = DataHelper.ExecuteDataTable(cmdText, CommandType.Text, parms);
+            return GetList(dt);
+        }
+
+        /// <summary>
+        /// SQL查询列表
+        /// </summary>
+        /// <param name="cmdText">SQL</param>
+        /// <returns></returns>
+        public IList<T> GetListBySQL2(string cmdText, IList<object> parmsValue, PageInfo page)
+        {
+            IDataParameter[] parms = null;
+            if (parmsValue != null)
+                FilterSQLParmeters(ref cmdText, parmsValue, ref parms);
+            return GetListBySQL(cmdText, parms, page);
+        }
         /// <summary>
         /// SQL查询列表
         /// </summary>
         /// <param name="IdValue">主键</param>
         /// <returns></returns>
-        public IList<T> GetListBySQL(string cmdText, IList<object> parmsValue)
+        public IList<T> GetListBySQL2(string cmdText, IList<object> parmsValue)
         {
             IDataParameter[] parms = null;
             if (parmsValue != null)
                 FilterSQLParmeters(ref cmdText, parmsValue, ref parms);
 
-            DataTable dt = DataHelper.ExecuteDataTable(cmdText, CommandType.Text, parms);
-            return GetList(dt);
+            return GetListBySQL(cmdText, parms);
         }
         #endregion
 
@@ -358,7 +380,7 @@ namespace Nice.DataAccess.DAL
             IDataParameter[] parms = null;
             if (parmsValue != null)
                 FilterQueryText(ref cmdText, parmsValue, ref parms);
-            return GetListBySQL(cmdText, parmsValue);
+            return GetListBySQL2(cmdText, parmsValue);
         }
         #endregion
     }

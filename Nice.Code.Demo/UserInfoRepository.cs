@@ -30,14 +30,14 @@ namespace Nice.Code.Demo
         {
             return dal.Update(entity);
         }
-        public bool Update(UserInfo entity, IList<string> properties)
+        public bool Update(UserInfo entity, params Expression<Func<UserInfo, object>>[] expressions)
         {
-            return dal.Update(entity, properties);
+            return dal.Update(entity, expressions);
         }
 
         public bool UpdateState(UserInfo entity)
         {
-            return dal.Update(entity, new string[] { "NState", "ModifyTime" });
+            return dal.Update(entity, o => o.NState, o => o.ModifyTime);
         }
 
         public UserInfo Get(string UserId)

@@ -65,7 +65,7 @@ namespace Nice.Code.Demo
                 {
                     userInfo.UserName = "sssss";
                     userInfo.ModifyTime = DateTime.Now;
-                    result = rp.Update(userInfo, new string[] { "UserName", "ModifyTime" });
+                    result = rp.Update(userInfo, o => o.UserName, o => o.ModifyTime);
                     Console.WriteLine("修改用户{0}", result ? "成功" : "失败");
                 }
             }

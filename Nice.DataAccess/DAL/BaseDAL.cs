@@ -489,8 +489,9 @@ namespace Nice.DataAccess.DAL
             }
             return DataHelper.ExecuteNonQuery(cmdText, dbps) > 0;
         }
-        public bool Update(T t, IList<string> properties)
+        public bool Update(T t, params Expression<Func<T, object>>[] expressions)
         {
+            IList<string> properties = ExpressionHandler.GetPropertyNames<T>(expressions);
             IList<IDataParameter> parms = new List<IDataParameter>();
             StringBuilder cmdText = new StringBuilder();
             cmdText.AppendFormat(" UPDATE {0} SET ", TableName);
@@ -503,8 +504,9 @@ namespace Nice.DataAccess.DAL
             return DataHelper.ExecuteNonQuery(cmdText.ToString(), CommandType.Text, parms.ToArray()) > 0;
         }
 
-        public bool Update(IList<T> list, IList<string> properties)
+        public bool Update(IList<T> list, params Expression<Func<T, object>>[] expressions)
         {
+            IList<string> properties = ExpressionHandler.GetPropertyNames<T>(expressions);
             IList<IDataParameter> parms = new List<IDataParameter>();
             StringBuilder cmdSql = new StringBuilder();
             IList<PropertyInfo> filterProperties = new List<PropertyInfo>();

@@ -65,14 +65,15 @@ namespace Nice.DataAccess.DAL
         {
             return dal.Update(list);
         }
-        public bool Update(T t, IList<string> properties)
+
+        public bool Update(T t, params Expression<Func<T, object>>[] expressions)
         {
-            return dal.Update(t, properties);
+            return dal.Update(t, expressions);
         }
 
-        public bool Update(IList<T> list, IList<string> properties)
+        public bool Update(IList<T> list, params Expression<Func<T, object>>[] expressions)
         {
-            return dal.Update(list, properties);
+            return dal.Update(list, expressions);
         }
 
         #endregion

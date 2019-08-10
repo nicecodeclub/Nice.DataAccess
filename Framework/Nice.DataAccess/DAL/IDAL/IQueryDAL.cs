@@ -1,12 +1,13 @@
 ﻿using Nice.DataAccess.Model.Page;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Nice.DataAccess.DAL
 {
     public interface IQueryDAL<T> where T : new()
     {
         T GetBySQL(string cmdText);
-        T GetBySQL(string cmdText, IList<object> parmsValue);
+        T GetBySQL(string cmdText, IList<IDataParameter> parms);
         IList<T> GetListBySQL(string cmdText);
         /// <summary>
         /// SQL查询列表
@@ -19,7 +20,7 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <param name="IdValue">主键</param>
         /// <returns></returns>
-        IList<T> GetListBySQL(string cmdText, IList<object> parmsValue);
+        IList<T> GetListBySQL(string cmdText, IList<IDataParameter> parms);
         /// <summary>
         /// SQL查询列表
         /// </summary>
@@ -27,7 +28,23 @@ namespace Nice.DataAccess.DAL
         /// <param name="parmsValue"></param>
         /// <param name="page"></param>
         /// <returns></returns>
-        IList<T> GetListBySQL(string cmdText, IList<object> parmsValue, PageInfo page);
+        IList<T> GetListBySQL(string cmdText, IList<IDataParameter> parms, PageInfo page);
+
+        T GetBySQL2(string cmdText, IList<object> parmsValue);
+        /// <summary>
+        /// SQL查询列表
+        /// </summary>
+        /// <param name="IdValue">主键</param>
+        /// <returns></returns>
+        IList<T> GetListBySQL2(string cmdText, IList<object> parmsValue);
+        /// <summary>
+        /// SQL查询列表
+        /// </summary>
+        /// <param name="cmdText"></param>
+        /// <param name="parmsValue"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        IList<T> GetListBySQL2(string cmdText, IList<object> parmsValue, PageInfo page);
     }
 
     public interface IQueryDAL
