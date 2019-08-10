@@ -81,4 +81,20 @@ Nuget Package Manager
      {
          return dal.IsExist(PropertyName, PropertyValue, IdValue);
      }
+  
+  
+  5、SQL操作   
+    
+    
+     private  QueryDAL<InfraElementInfo> query = new QueryDAL<InfraElementInfo>();
      
+     
+     public IList<InfraElementInfo> GetListByRoleId(int RoleId)
+     {
+           StringBuilder sb = new StringBuilder();
+           sb.Append(" select * from infra_element_info e,sys_role_data r ");
+           sb.Append(" WHERE e.ElementId=r.DataId and r.DataType=1");
+           sb.Append(" and r.RoleId=?");
+
+           return query.GetListBySQL(sb.ToString(),new object[] { RoleId });
+     }
