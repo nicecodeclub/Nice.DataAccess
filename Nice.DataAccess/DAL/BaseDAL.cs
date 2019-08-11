@@ -489,9 +489,24 @@ namespace Nice.DataAccess.DAL
             }
             return DataHelper.ExecuteNonQuery(cmdText, dbps) > 0;
         }
+
         public bool Update(T t, params Expression<Func<T, object>>[] expressions)
         {
             IList<string> properties = ExpressionHandler.GetPropertyNames<T>(expressions);
+            if (properties.Count == 0)
+                throw new ArgumentNullException("expressions cannot be null");
+            return Update(t, expressions);
+        }
+        public bool Update(IList<T> list, params Expression<Func<T, object>>[] expressions)
+        {
+            IList<string> properties = ExpressionHandler.GetPropertyNames<T>(expressions);
+            if (properties.Count == 0)
+                throw new ArgumentNullException("expressions cannot be null");
+            return Update(list, expressions);
+        }
+
+        public bool Update(T t, IList<string> properties)
+        {
             IList<IDataParameter> parms = new List<IDataParameter>();
             StringBuilder cmdText = new StringBuilder();
             cmdText.AppendFormat(" UPDATE {0} SET ", TableName);
@@ -504,9 +519,8 @@ namespace Nice.DataAccess.DAL
             return DataHelper.ExecuteNonQuery(cmdText.ToString(), CommandType.Text, parms.ToArray()) > 0;
         }
 
-        public bool Update(IList<T> list, params Expression<Func<T, object>>[] expressions)
+        public bool Update(IList<T> list, IList<string> properties)
         {
-            IList<string> properties = ExpressionHandler.GetPropertyNames<T>(expressions);
             IList<IDataParameter> parms = new List<IDataParameter>();
             StringBuilder cmdSql = new StringBuilder();
             IList<PropertyInfo> filterProperties = new List<PropertyInfo>();
@@ -533,7 +547,6 @@ namespace Nice.DataAccess.DAL
             }
             return DataHelper.ExecuteNonQuery(cmdText.ToString(), CommandType.Text, parms.ToArray()) > 0;
         }
-
         #endregion
 
         #region 添加或更新  InsertOrUpdate

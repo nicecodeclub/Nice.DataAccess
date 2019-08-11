@@ -76,6 +76,15 @@ namespace Nice.DataAccess.DAL
             return dal.Update(list, expressions);
         }
 
+        public bool Update(T t, IList<string> properties)
+        {
+            return dal.Update(t, properties);
+        }
+
+        public bool Update(IList<T> list, IList<string> properties)
+        {
+            return dal.Update(list, properties);
+        }
         #endregion
 
         #region 添加或更新  InsertOrUpdate

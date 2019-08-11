@@ -137,34 +137,65 @@ namespace Nice.DataAccess
             index++;
         }
 
+        public static string GetPropertyName<TEntity, TReturn>(Expression<Func<TEntity, TReturn>> expression)
+        {
+            MemberExpression memberExpress = expression.Body as MemberExpression;
+            if (memberExpress != null)
+            {
+                return memberExpress.Member.Name;
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
         public static string GetPropertyName<T>(Expression<Func<T, object>> expression)
         {
-            MemberExpression memberExpression = expression.Body as MemberExpression;
-            if (memberExpression != null)
+            MemberExpression memberExpress = null;
+            if (expression.Body.NodeType == ExpressionType.MemberAccess)
             {
-                return memberExpression.Member.Name;
+                memberExpress = expression.Body as MemberExpression;
             }
-            return string.Empty;
+            if (expression.Body.NodeType == ExpressionType.Convert)
+            {
+                memberExpress = ((UnaryExpression)expression.Body).Operand as MemberExpression;
+            }
+            if (memberExpress != null)
+            {
+                return memberExpress.Member.Name;
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
         public static IList<string> GetPropertyNames<T>(params Expression<Func<T, object>>[] expressions)
         {
-            IList<string> properties = new List<string>();
-            if (expressions == null) return properties;
-            MemberExpression memberExpression = null;
+            IList<string> propertyNames = new List<string>();
+            MemberExpression memberExpress = null;
+            if (expressions == null) return propertyNames;
             foreach (Expression<Func<T, object>> expression in expressions)
             {
-                memberExpression = expression.Body as MemberExpression;
-                if (memberExpression != null)
+                if (expression.Body.NodeType == ExpressionType.MemberAccess)
                 {
-                    properties.Add(memberExpression.Member.Name);
+                    memberExpress = expression.Body as MemberExpression;
+                }
+                if (expression.Body.NodeType == ExpressionType.Convert)
+                {
+                    memberExpress = ((UnaryExpression)expression.Body).Operand as MemberExpression;
+                }
+                if (memberExpress != null)
+                {
+                    propertyNames.Add(memberExpress.Member.Name);
                 }
                 else
                 {
-                    properties.Add(string.Empty);
+                    propertyNames.Add(string.Empty);
                 }
             }
-            return properties;
+            return propertyNames;
         }
     }
 
