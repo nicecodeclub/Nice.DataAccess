@@ -51,7 +51,7 @@ Nuget Package Manager
      }
      public bool UpdateState(UserInfo entity)
      {
-        return dal.Update(entity, new string[] { "NState", "ModifyTime" });
+        return dal.Update(entity, o => o.NState, o => o.ModifyTime);
      }
      public bool Delete(string UserId)
      {
