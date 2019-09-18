@@ -47,6 +47,11 @@ namespace Nice.Code.Demo
             userInfo.NState = 1;
             bool result = rp.Insert(userInfo);
             Console.WriteLine("新增用户{0}", result ? "成功" : "失败");
+
+            userInfo.SRemark = "新增或更新用户";
+            userInfo.CreateTime = DateTime.Now;
+            result = rp.InsertOrUpdate(userInfo);
+            Console.WriteLine("新增或更新用户{0}", result ? "成功" : "失败");
         }
 
         static void TestUpdate()
@@ -64,6 +69,11 @@ namespace Nice.Code.Demo
                 if (userInfo != null)
                 {
                     userInfo.UserName = "sssss";
+                    userInfo.ModifyTime = DateTime.Now;
+                    result = rp.UpdateState(userInfo);
+                    Console.WriteLine("修改用户{0}", result ? "成功" : "失败");
+
+                    userInfo.UserName = "456789";
                     userInfo.ModifyTime = DateTime.Now;
                     result = rp.Update(userInfo, o => o.UserName, o => o.ModifyTime);
                     Console.WriteLine("修改用户{0}", result ? "成功" : "失败");

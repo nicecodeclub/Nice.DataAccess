@@ -16,6 +16,11 @@ namespace Nice.Code.Demo
             return dal.Insert(entity);
         }
 
+        public bool InsertOrUpdate(UserInfo entity)
+        {
+            return dal.InsertOrUpdate(entity);
+        }
+
         public IList<UserInfo> GetList()
         {
             return dal.GetList();

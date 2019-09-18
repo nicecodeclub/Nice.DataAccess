@@ -47,6 +47,7 @@ namespace Nice.DataAccess.DAL
         protected string GetColumnText;//获取列数据列名
         protected string SetColumnText;//设置列数据列名
         protected string InsertColumnText;//插入列数据列名
+        protected string InsertColumnValue;//插入列Value
         protected readonly DataHelper DataHelper = null;
 
         #endregion
@@ -79,13 +80,15 @@ namespace Nice.DataAccess.DAL
             StringBuilder sbGetColumns = new StringBuilder(50);
             StringBuilder sbSetColumns = new StringBuilder(50);
             StringBuilder sbInsertColumn = new StringBuilder(50);
+            StringBuilder sbInsertValue = new StringBuilder(50);
             IList<PropertyInfo> propertyArray = new List<PropertyInfo>();
-            GetPropertyInfo(properties, propertyArray, sbGetColumns, sbSetColumns, sbInsertColumn);
+            GetPropertyInfo(properties, propertyArray, sbGetColumns, sbSetColumns, sbInsertColumn, sbInsertValue);
 
             tableProperties = propertyArray.ToArray();
-            GetColumnText = sbGetColumns.ToString().Trim(',');
-            SetColumnText = sbSetColumns.ToString().Trim(',');
-            InsertColumnText = sbInsertColumn.ToString().Trim(',');
+            GetColumnText = sbGetColumns.ToString().TrimEnd(',');
+            SetColumnText = sbSetColumns.ToString().TrimEnd(',');
+            InsertColumnText = sbInsertColumn.ToString().TrimEnd(',');
+            InsertColumnValue = sbInsertValue.ToString().TrimEnd(',');
             if (IdColomn == null)
                 throw new IdNotImplementedException();
         }
@@ -94,7 +97,7 @@ namespace Nice.DataAccess.DAL
         /// 获取类型属性和字段名信息
         /// </summary>
 
-        private void GetPropertyInfo(PropertyInfo[] properties, IList<PropertyInfo> propertyArray, StringBuilder sbGetColumns, StringBuilder sbSetColumns, StringBuilder sbInsertColumn)
+        private void GetPropertyInfo(PropertyInfo[] properties, IList<PropertyInfo> propertyArray, StringBuilder sbGetColumns, StringBuilder sbSetColumns, StringBuilder sbInsertColumn, StringBuilder sbInsertValue)
         {
             string propertyName = null;
             string columnName = null;
@@ -118,6 +121,7 @@ namespace Nice.DataAccess.DAL
                 if (idAttri == null)
                 {
                     sbInsertColumn.AppendFormat(" {0},", columnName);
+                    sbInsertValue.AppendFormat(" {0}{1},", DataHelper.GetParameterPrefix(), columnName);
                     if (attri == null || !attri.IsReadOnly)
                         sbSetColumns.AppendFormat(" {0}={1}{2},", columnName, DataHelper.GetParameterPrefix(), propertyName);
                     GetParamFilterValid(pi, columnName);
@@ -131,6 +135,7 @@ namespace Nice.DataAccess.DAL
                     if (idAttri.GenerateType == IdGenerateType.Assign)
                     {
                         sbInsertColumn.AppendFormat(" {0},", columnName);
+                        sbInsertValue.AppendFormat(" {0}{1},", DataHelper.GetParameterPrefix(), columnName);
                     }
                 }
             }
@@ -154,6 +159,7 @@ namespace Nice.DataAccess.DAL
 
         #region 抽象方法 abstract
         protected abstract string GetLastIncrementID();
+        protected abstract string GetInsertOrUpdateSql();
         #endregion
 
         #region 公共
@@ -163,7 +169,7 @@ namespace Nice.DataAccess.DAL
         /// <param name="dt"></param>
         /// <param name="propertys"></param>
 
-        private void PrepareInsert(T t, StringBuilder sbColumn, IList<IDataParameter> parms)
+        private void PrepareInsert(T t, IList<IDataParameter> parms)
         {
             PropertyInfo pi = null;
             for (int i = 0; i < tableProperties.Length; i++)
@@ -171,7 +177,6 @@ namespace Nice.DataAccess.DAL
                 pi = tableProperties[i];
                 if (IdColomn.IdProperty.Name == pi.Name && IdColomn.GenerateType != IdGenerateType.Assign)
                     continue;
-                sbColumn.AppendFormat("{0}{1},", DataHelper.GetParameterPrefix(), pi.Name);
                 parms.Add(DataHelper.CreateParameter(string.Format("{0}{1}", DataHelper.GetParameterPrefix(), pi.Name), pi.GetValue(t)));
             }
         }
@@ -404,9 +409,8 @@ namespace Nice.DataAccess.DAL
         public bool Insert(T t)
         {
             IList<IDataParameter> parms = new List<IDataParameter>();
-            StringBuilder sbColumn = new StringBuilder(50);
-            PrepareInsert(t, sbColumn, parms);
-            string cmdText = string.Format("INSERT INTO {0}({1}) VALUES({2})", TableName, InsertColumnText, sbColumn.ToString().TrimEnd(','));
+            PrepareInsert(t, parms);
+            string cmdText = string.Format("INSERT INTO {0}({1}) VALUES({2})", TableName, InsertColumnText, InsertColumnValue);
             return DataHelper.ExecuteNonQuery(cmdText, CommandType.Text, parms.ToArray()) > 0;
         }
         /// <summary>
@@ -419,15 +423,13 @@ namespace Nice.DataAccess.DAL
             string[] cmdText = new string[list.Count];
             IDataParameter[][] dbps = new IDataParameter[list.Count()][];
             IList<IDataParameter> parms = null;
-            StringBuilder sbColumn = null;
             for (int i = 0; i < list.Count; i++)
             {
                 T t = list[i];
-                sbColumn = new StringBuilder(50);
                 parms = new List<IDataParameter>();
-                PrepareInsert(t, sbColumn, parms);
+                PrepareInsert(t, parms);
                 dbps[i] = parms.ToArray();
-                cmdText[i] = string.Format("INSERT INTO {0}({1}) VALUES({2})", TableName, InsertColumnText, sbColumn.ToString().TrimEnd(','));
+                cmdText[i] = string.Format("INSERT INTO {0}({1}) VALUES({2})", TableName, InsertColumnText, InsertColumnValue);
             }
             return DataHelper.ExecuteNonQuery(cmdText, dbps) > 0;
         }
@@ -441,9 +443,8 @@ namespace Nice.DataAccess.DAL
             if (IdColomn.GenerateType != IdGenerateType.Increment)
                 throw new NotImplementedException("不支持非自增列对象获取创建ID");
             IList<IDataParameter> parms = new List<IDataParameter>();
-            StringBuilder sbColumn = new StringBuilder(50);
-            PrepareInsert(t, sbColumn, parms);
-            string cmdText = string.Format("INSERT INTO {0}({1}) VALUES({2});{3};", TableName, InsertColumnText, sbColumn.ToString().TrimEnd(','), GetLastIncrementID());
+            PrepareInsert(t, parms);
+            string cmdText = string.Format("INSERT INTO {0}({1}) VALUES({2});{3};", TableName, InsertColumnText, InsertColumnValue, GetLastIncrementID());
             object obj = DataHelper.ExecuteScalar(cmdText, CommandType.Text, parms.ToArray());
             if (obj != null && obj != DBNull.Value)
             {
@@ -495,7 +496,7 @@ namespace Nice.DataAccess.DAL
             IList<string> properties = ExpressionHandler.GetPropertyNames<T>(expressions);
             if (properties.Count == 0)
                 throw new ArgumentNullException("expressions cannot be null");
-            return Update(t, expressions);
+            return Update(t, properties);
         }
 
         public bool Update(IList<T> list, params Expression<Func<T, object>>[] expressions)
@@ -503,7 +504,7 @@ namespace Nice.DataAccess.DAL
             IList<string> properties = ExpressionHandler.GetPropertyNames<T>(expressions);
             if (properties.Count == 0)
                 throw new ArgumentNullException("expressions cannot be null");
-            return Update(list, expressions);
+            return Update(list, properties);
         }
 
         public bool Update(T t, IList<string> properties)
@@ -553,12 +554,24 @@ namespace Nice.DataAccess.DAL
         #region 添加或更新  InsertOrUpdate
         public bool InsertOrUpdate(T t)
         {
-            throw new NotImplementedException();
+            IList<IDataParameter> parms = new List<IDataParameter>();
+            PrepareInsert(t, parms);
+            return DataHelper.ExecuteNonQuery(GetInsertOrUpdateSql(), CommandType.Text, parms) > 0;
         }
-
         public bool InsertOrUpdate(IList<T> list)
         {
-            throw new NotImplementedException();
+            string[] cmdText = new string[list.Count];
+            IDataParameter[][] dbps = new IDataParameter[list.Count()][];
+            IList<IDataParameter> parms = null;
+            for (int i = 0; i < list.Count; i++)
+            {
+                T t = list[i];
+                parms = new List<IDataParameter>();
+                PrepareInsert(t, parms);
+                dbps[i] = parms.ToArray();
+                cmdText[i] = GetInsertOrUpdateSql();
+            }
+            return DataHelper.ExecuteNonQuery(cmdText, dbps) > 0;
         }
         #endregion
 

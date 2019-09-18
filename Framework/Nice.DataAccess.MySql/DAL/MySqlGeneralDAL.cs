@@ -15,5 +15,9 @@ namespace Nice.DataAccess.MySql.DAL
         {
             return "SELECT LAST_INSERT_ID()";
         }
+        protected override string GetInsertOrUpdateSql()
+        {
+            return string.Format("INSERT INTO {0}({1}) VALUES({2}) ON DUPLICATE KEY UPDATE {3} ", TableName, InsertColumnText, InsertColumnValue, SetColumnText);
+        }
     }
 }
