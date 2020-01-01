@@ -29,6 +29,10 @@ namespace Nice.DataAccess.DAL
             Type type = typeof(T);
             properties = type.GetProperties();
         }
+        #region 抽象方法 abstract
+        protected abstract string GetPageSql(PageInfo page);
+        #endregion
+
         #region 公共
         private IList<T> GetList(DataTable dt)
         {
@@ -38,8 +42,8 @@ namespace Nice.DataAccess.DAL
                 T t = default(T);
                 object value = null;
                 result = new List<T>();
-                PropertyInfo[] querypropertys = null;
-                FilterProperty(dt, properties, ref querypropertys);
+                IList<PropertyInfo> querypropertys = new List<PropertyInfo>();
+                FilterProperty(dt, properties,  querypropertys);
                 foreach (DataRow dr in dt.Rows)
                 {
                     t = new T();
@@ -56,17 +60,15 @@ namespace Nice.DataAccess.DAL
             }
             return result;
         }
-        private void FilterProperty(DataTable dt, PropertyInfo[] propertys, ref PropertyInfo[] querypropertys)
+        private void FilterProperty(DataTable dt, PropertyInfo[] propertys, IList<PropertyInfo> querypropertys)
         {
-            IList<PropertyInfo> propertyArray = new List<PropertyInfo>(20);
             foreach (PropertyInfo pi in propertys)
             {
                 if (dt.Columns.Contains(pi.Name))
                 {
-                    propertyArray.Add(pi);
+                    querypropertys.Add(pi);
                 }
             }
-            querypropertys = propertyArray.ToArray();
         }
         /// <summary>
         /// 过滤SQL参数
@@ -173,7 +175,7 @@ namespace Nice.DataAccess.DAL
             sb.AppendFormat(cmdText);
             if (page != null)
             {
-                sb.AppendFormat(" ORDER BY {0} {1} LIMIT {2},{3}; ", page.OrderColName, page.OrderStr, page.StartIndex, page.PageSize);
+                sb.Append(GetPageSql(page));
                 sb.AppendFormat(" SELECT COUNT(1) FROM ({0}) T;", cmdText);
             }
             DataSet ds = DataHelper.ExecuteDataSet(sb.ToString(), CommandType.Text, parms);

@@ -1,4 +1,5 @@
 ﻿using Nice.DataAccess.DAL;
+using Nice.DataAccess.Model.Page;
 using Nice.DataAccess.Models;
 using System.Text;
 
@@ -23,6 +24,11 @@ namespace Nice.DataAccess.Npgsql.DAL
             sb.AppendFormat("INSERT INTO {0}({1}) VALUES({2})", TableName, InsertColumnText, InsertColumnValue);
             sb.AppendFormat("ON CONFLICT({0}) DO UPDATE SET {1} ", IdColomn.ColomnName, SetColumnText);
             return sb.ToString();
+        }
+
+        protected override string GetPageSql(PageInfo page)
+        {
+            return string.Format(" ORDER BY {0}.{1} {2} limit {4} OFFSET {3}; ", ClassSortName, string.IsNullOrEmpty(page.OrderColName) ? IdColomn.ColomnName : page.OrderColName, page.OrderStr, page.StartIndex, page.PageSize);
         }
     }
 }

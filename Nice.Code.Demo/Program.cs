@@ -27,6 +27,8 @@ namespace Nice.Code.Demo
             rp = new UserInfoRepository();
             TestInsert();
             TestUpdate();
+            TestGetList();
+            TestDelete();
             Console.ReadLine();
         }
 
@@ -81,6 +83,27 @@ namespace Nice.Code.Demo
             }
         }
 
+        static void TestGetList()
+        {
+            IList<UserInfo> userList = rp.GetList();
+            userList = rp.GetList(new DataAccess.Model.Page.PageInfo(0, 10));
+            userList = rp.GetList(o => o.UserName == "test");
+
+            userList = rp.GetList(o => o.UserName == "test", new DataAccess.Model.Page.PageInfo(0, 10));
+        }
+
+        static void TestDelete()
+        {
+            IList<UserInfo> userList = rp.GetList(new DataAccess.Model.Page.PageInfo(0, 10));
+
+            UserInfo userInfo = userList.Last();
+            UserInfo firstuserInfo = userList.First();
+            bool result = rp.VirtualDelete(userInfo);
+            result = rp.VirtualDelete(firstuserInfo.UserId);
+
+            result = rp.Delete(userInfo);
+            result = rp.Delete(firstuserInfo.UserId);
+        }
         static void TestTrans()
         {
             UserInfo userInfo = rp.Get("27428467b52e4a3bac792c42e3d65891");
