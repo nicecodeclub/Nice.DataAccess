@@ -142,7 +142,6 @@ namespace Nice.DataAccess.DAL
         /// <returns></returns>
         public T GetBySQL2(string cmdText, IList<object> parmsValue)
         {
-            T t = default(T);
             IDataParameter[] parms = null;
             if (parmsValue != null)
                 FilterSQLParmeters(ref cmdText, parmsValue, ref parms);

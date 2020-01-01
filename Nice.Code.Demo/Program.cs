@@ -29,6 +29,7 @@ namespace Nice.Code.Demo
             TestUpdate();
             TestGetList();
             TestDelete();
+            TestTrans();
             Console.ReadLine();
         }
 
@@ -112,11 +113,11 @@ namespace Nice.Code.Demo
                 try
                 {
                     TestInsert();
-                    using (TransactionScope transactionScope2 = new TransactionScope())
-                    {
-                        rp.UpdateErrorTest(userInfo);
-                        transactionScope2.Complete();
-                    }
+                    //using (TransactionScope transactionScope2 = new TransactionScope())
+                    //{
+                    //    rp.UpdateErrorTest(userInfo);
+                    //    transactionScope2.Complete();
+                    //}
                     transactionScope1.Complete();
                 }
                 catch (Exception)
