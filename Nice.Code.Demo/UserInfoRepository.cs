@@ -30,7 +30,14 @@ namespace Nice.Code.Demo
         {
             return dal.GetList(page);
         }
-
+        public IList<UserInfo> GetList(Expression<Func<UserInfo, bool>> expression)
+        {
+            return dal.GetList(expression);
+        }
+        public IList<UserInfo> GetList(Expression<Func<UserInfo, bool>> expression, PageInfo page)
+        {
+            return dal.GetList(expression, page);
+        }
         public bool Update(UserInfo entity)
         {
             return dal.Update(entity);
@@ -58,6 +65,15 @@ namespace Nice.Code.Demo
         public bool Delete(string UserId)
         {
             return dal.Delete(UserId);
+        }
+        public bool Delete(UserInfo entity)
+        {
+            return dal.Delete(entity);
+        }
+
+        public bool VirtualDelete(UserInfo entity)
+        {
+            return dal.VirtualDelete(entity);
         }
 
         public bool VirtualDelete(string UserId)
