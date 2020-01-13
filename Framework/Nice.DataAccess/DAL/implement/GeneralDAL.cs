@@ -65,7 +65,6 @@ namespace Nice.DataAccess.DAL
         {
             return dal.Update(list);
         }
-
         public bool Update(T t, params Expression<Func<T, object>>[] expressions)
         {
             return dal.Update(t, expressions);
@@ -85,6 +84,7 @@ namespace Nice.DataAccess.DAL
         {
             return dal.Update(list, properties);
         }
+
         #endregion
 
         #region 添加或更新  InsertOrUpdate
@@ -132,7 +132,7 @@ namespace Nice.DataAccess.DAL
         /// <returns></returns>
         public IList<T> GetList(PageInfo page)
         {
-            return dal.GetList( page);
+            return dal.GetList(page);
         }
 
         public IList<T> GetList(Expression<Func<T, bool>> expression)

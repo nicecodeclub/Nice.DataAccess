@@ -50,6 +50,7 @@ namespace Nice.DataAccess.DAL
         /// <param name="list"></param>
         /// <returns></returns>
         bool Update(IList<T> list, params Expression<Func<T, object>>[] expressions);
+
         /// <summary>
         /// 更新数据
         /// </summary>
