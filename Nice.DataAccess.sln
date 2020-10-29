@@ -13,12 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nice.DataAccess.MsSql", "Ni
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nice.Code.Demo", "Nice.Code.Demo\Nice.Code.Demo.csproj", "{89612B0B-758E-4F49-AF28-D9F1F083E77A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{27F4ABC0-554B-4616-B407-4CC7B8B695EA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nice.DataAccess", "Framework\Nice.DataAccess\Nice.DataAccess.csproj", "{CAB4653B-CDEC-4F92-BC4A-0081225F5042}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nice.DataAccess.MySql", "Framework\Nice.DataAccess.MySql\Nice.DataAccess.MySql.csproj", "{6FA8010C-5488-4C74-A65E-CB62032316AB}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "licenses", "licenses", "{D5282BA0-B195-483C-A443-473785243389}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.txt = LICENSE.txt
@@ -50,21 +44,9 @@ Global
 		{89612B0B-758E-4F49-AF28-D9F1F083E77A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89612B0B-758E-4F49-AF28-D9F1F083E77A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89612B0B-758E-4F49-AF28-D9F1F083E77A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CAB4653B-CDEC-4F92-BC4A-0081225F5042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CAB4653B-CDEC-4F92-BC4A-0081225F5042}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CAB4653B-CDEC-4F92-BC4A-0081225F5042}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CAB4653B-CDEC-4F92-BC4A-0081225F5042}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FA8010C-5488-4C74-A65E-CB62032316AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FA8010C-5488-4C74-A65E-CB62032316AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FA8010C-5488-4C74-A65E-CB62032316AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FA8010C-5488-4C74-A65E-CB62032316AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{CAB4653B-CDEC-4F92-BC4A-0081225F5042} = {27F4ABC0-554B-4616-B407-4CC7B8B695EA}
-		{6FA8010C-5488-4C74-A65E-CB62032316AB} = {27F4ABC0-554B-4616-B407-4CC7B8B695EA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {963A1CED-75DB-4D50-860D-AD6DA974CD01}

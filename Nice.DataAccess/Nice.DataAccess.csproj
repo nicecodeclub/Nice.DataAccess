@@ -1,18 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-   <TargetFramework>netstandard2.1</TargetFramework>
    <TargetFrameworks>netstandard2.1;net461;net472</TargetFrameworks>
    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
    <Authors>nicecode.club</Authors>
    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-   <PackageVersion>1.0.2.5</PackageVersion>
+   <PackageVersion>1.0.2.7</PackageVersion>
    <PackageProjectUrl>http://www.nicecode.club/</PackageProjectUrl>
    <PackageLicenseUrl></PackageLicenseUrl>
    <License>Apache License 2.0</License>
    <PackageTags>Nice.DataAccess</PackageTags>
    <Description>micro ORM ,simplify data access while ensuring high performance.</Description>
-   <PackageReleaseNotes>1.0.2.5</PackageReleaseNotes>
+   <PackageReleaseNotes>1.0.2.7</PackageReleaseNotes>
    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
   </PropertyGroup>
 
