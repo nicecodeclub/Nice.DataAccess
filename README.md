@@ -37,7 +37,7 @@ Nuget Package Manager
   
   3、初始化DAL操作对象    
     
-    private static GeneralDAL<UserInfo> dal = new GeneralDAL<UserInfo>();     
+    private GeneralDAL<UserInfo> dal = DALFactory<UserInfo>.Create();   
   
   4、操作实体对象
             
@@ -86,7 +86,8 @@ Nuget Package Manager
   5、SQL操作   
     
     
-     private  QueryDAL<InfraElementInfo> query = new QueryDAL<InfraElementInfo>();
+     //private  QueryDAL<InfraElementInfo> query = new QueryDAL<InfraElementInfo>();
+     private QueryDAL<InfraElementInfo> query = QueryDALFactory<InfraElementInfo>.Create();
      
      public IList<InfraElementInfo> GetListByRoleId(int RoleId)
      {
