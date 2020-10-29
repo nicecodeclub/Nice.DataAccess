@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Nice.DataAccess.Attributes;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 
 namespace Nice.DataAccess
@@ -98,7 +99,17 @@ namespace Nice.DataAccess
             {
                 if (expression.Expression is ParameterExpression)
                 {
-                    sbSql.Append(expression.Member.Name);
+                    string columnName = null;
+                    ColumnAttribute attr = CustomAttributeExtensions.GetCustomAttribute<ColumnAttribute>(expression.Member);
+                    if (attr == null || string.IsNullOrEmpty(attr.Name))
+                    {
+                        columnName = expression.Member.Name;
+                    }
+                    else
+                    {
+                        columnName = attr.Name;
+                    }
+                    sbSql.Append(columnName);
                     parameters.Add(new DataParameter() { ParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), expression.Member.Name) });
                 }
                 else

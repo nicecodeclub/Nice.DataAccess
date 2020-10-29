@@ -464,7 +464,7 @@ namespace Nice.DataAccess
             {
                 if (trans != null)
                     trans.Rollback();
-                throw ex;
+                throw new DbExcuteException(cmdText[n], ex);
             }
             catch (Exception ex)
             {

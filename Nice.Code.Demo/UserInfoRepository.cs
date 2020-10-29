@@ -1,5 +1,4 @@
-﻿using Nice.DataAccess;
-using Nice.DataAccess.DAL;
+﻿using Nice.DataAccess.DAL;
 using Nice.DataAccess.Model.Page;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ namespace Nice.Code.Demo
 {
     public class UserInfoRepository
     {
-        private static GeneralDAL<UserInfo> dal = new GeneralDAL<UserInfo>();
+        private GeneralDAL<UserInfo> dal = DALFactory<UserInfo>.Create();
 
         public bool Insert(UserInfo entity)
         {
@@ -86,9 +85,5 @@ namespace Nice.Code.Demo
             return dal.IsExist(PropertyName, PropertyValue, IdValue);
         }
 
-        public bool UpdateErrorTest(UserInfo userInfo)
-        {
-            return DataUtil.GetDataHelper().ExecuteNonQuery(string.Format("update tbl_user_info set UserName='{1}' where UserIdd={0}", userInfo.UserName, userInfo.UserId)) > 0;
-        }
     }
 }

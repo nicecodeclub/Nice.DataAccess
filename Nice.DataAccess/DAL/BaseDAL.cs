@@ -532,10 +532,9 @@ namespace Nice.DataAccess.DAL
 
         public bool Update(IList<T> list, IList<string> properties)
         {
-            IList<IDataParameter> parms = new List<IDataParameter>();
             StringBuilder cmdSql = new StringBuilder();
             IList<PropertyInfo> filterProperties = new List<PropertyInfo>();
-            cmdSql.Append(" UPDATE {0} SET ");
+            cmdSql.AppendFormat(" UPDATE {0} SET ", TableName);
             PrepareUpdateSql(properties, cmdSql, filterProperties);
             string IdParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), IdColomn.IdProperty.Name);
             cmdSql.AppendFormat(" WHERE {0}={1}", IdColomn.ColomnName, IdParameterName);
@@ -556,7 +555,7 @@ namespace Nice.DataAccess.DAL
                 dbs.Add(DataHelper.CreateParameter(IdParameterName, IdValue));
                 dbps[i] = dbs.ToArray();
             }
-            return DataHelper.ExecuteNonQuery(cmdText.ToString(), CommandType.Text, parms) > 0;
+            return DataHelper.ExecuteNonQuery(cmdText, dbps) > 0;
         }
         #endregion
 
