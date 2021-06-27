@@ -144,6 +144,11 @@ namespace Nice.DataAccess.DAL
         {
             return dal.GetList(expression, page);
         }
+
+        public long Count()
+        {
+            return dal.Count();
+        }
         #endregion
 
         #region 物理删除 Delete

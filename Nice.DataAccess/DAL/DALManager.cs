@@ -2,7 +2,7 @@
 
 namespace Nice.DataAccess.DAL
 {
-    public static class DALFactory<T> where T : TEntity, new()
+    public static class DALManager<T> where T : TEntity, new()
     {
         private static readonly GeneralDAL<T> dal = new GeneralDAL<T>();
 

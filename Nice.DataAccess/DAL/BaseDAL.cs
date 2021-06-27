@@ -169,6 +169,7 @@ namespace Nice.DataAccess.DAL
         protected abstract string GetLastIncrementID();
         protected abstract string GetInsertOrUpdateSql();
         protected abstract string GetPageSql(PageInfo page);
+        protected abstract string GetCountFuncName();
         #endregion
 
         #region 公共
@@ -837,6 +838,19 @@ namespace Nice.DataAccess.DAL
             if (obj != null && !obj.Equals(IdValue))
                 return true;
             return false;
+        }
+
+        public long Count()
+        {
+            StringBuilder cmdText = new StringBuilder(20);
+            cmdText.AppendFormat("SELECT {0}({1}.{2}) FROM {3} {1}", GetCountFuncName(), ClassSortName, IdColomn.ColomnName, TableName);
+            IDataParameter[] parms = null;
+            if (filterValid != null)
+            {
+                cmdText.AppendFormat(" WHERE {0}.{1}={2}{3}", ClassSortName, filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
+                parms = new IDataParameter[] { filterValid.ParamFilterValid };
+            }
+            return DataHelper.ExecuteScalar<long>(cmdText.ToString());
         }
         #endregion
     }

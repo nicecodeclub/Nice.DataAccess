@@ -39,5 +39,9 @@ namespace Nice.DataAccess.MsSql.DAL
             return string.Format(" ORDER BY {0}.{1} {2} OFFSET {3} ROW FETCH NEXT {4} ROW ONLY  ", 
                 ClassSortName, string.IsNullOrEmpty(page.OrderColName) ? IdColomn.ColomnName : page.OrderColName, page.OrderStr, page.StartIndex, page.PageSize);
         }
+        protected override string GetCountFuncName()
+        {
+            return "COUNT";
+        }
     }
 }

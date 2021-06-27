@@ -30,5 +30,9 @@ namespace Nice.DataAccess.Npgsql.DAL
         {
             return string.Format(" ORDER BY {0}.{1} {2} limit {4} OFFSET {3}; ", ClassSortName, string.IsNullOrEmpty(page.OrderColName) ? IdColomn.ColomnName : page.OrderColName, page.OrderStr, page.StartIndex, page.PageSize);
         }
+        protected override string GetCountFuncName()
+        {
+            return "COUNT";
+        }
     }
 }

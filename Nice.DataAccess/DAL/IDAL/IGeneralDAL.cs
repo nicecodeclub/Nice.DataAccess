@@ -153,6 +153,10 @@ namespace Nice.DataAccess.DAL
         /// <param name="t"></param>
         /// <returns></returns>
         bool VirtualDelete(IList<T> list);
-
+        /// <summary>
+        /// 获取实体集总数
+        /// </summary>
+        /// <returns></returns>
+        long Count();
     }
 }

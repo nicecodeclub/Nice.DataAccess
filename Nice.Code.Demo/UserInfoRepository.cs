@@ -8,7 +8,7 @@ namespace Nice.Code.Demo
 {
     public class UserInfoRepository
     {
-        private GeneralDAL<UserInfo> dal = DALFactory<UserInfo>.Create();
+        private GeneralDAL<UserInfo> dal = DALManager<UserInfo>.Create();
 
         public bool Insert(UserInfo entity)
         {
