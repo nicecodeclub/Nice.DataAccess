@@ -33,5 +33,10 @@ namespace Nice.DataAccess.MySql.DAL
         {
             return "COUNT";
         }
+
+        protected override string GetMaxFuncName()
+        {
+            return "MAX";
+        }
     }
 }

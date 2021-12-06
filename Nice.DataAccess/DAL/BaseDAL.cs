@@ -170,6 +170,7 @@ namespace Nice.DataAccess.DAL
         protected abstract string GetInsertOrUpdateSql();
         protected abstract string GetPageSql(PageInfo page);
         protected abstract string GetCountFuncName();
+        protected abstract string GetMaxFuncName();
         #endregion
 
         #region 公共
@@ -458,7 +459,7 @@ namespace Nice.DataAccess.DAL
             object obj = DataHelper.ExecuteScalar(cmdText, CommandType.Text, parms);
             if (obj != null && obj != DBNull.Value)
             {
-                IdColomn.IdProperty.SetValue(t, obj);
+                IdColomn.IdProperty.SetValue(t, Convert.ChangeType(obj, IdColomn.IdProperty.PropertyType));
                 return true;
             }
             return false;
@@ -839,6 +840,7 @@ namespace Nice.DataAccess.DAL
                 return true;
             return false;
         }
+        #endregion
 
         public long Count()
         {
@@ -850,8 +852,36 @@ namespace Nice.DataAccess.DAL
                 cmdText.AppendFormat(" WHERE {0}.{1}={2}{3}", ClassSortName, filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
                 parms = new IDataParameter[] { filterValid.ParamFilterValid };
             }
-            return DataHelper.ExecuteScalar<long>(cmdText.ToString());
+            return DataHelper.ExecuteScalar<long>(cmdText.ToString(), parms);
         }
-        #endregion
+
+        public TMax Max<TMax>(Expression<Func<T, object>> maxPropExpression, Expression<Func<T, bool>> filterExpression, bool filterValidFiled)
+        {
+            StringBuilder cmdText = new StringBuilder(20);
+            cmdText.AppendFormat("SELECT {0}({1}.{2}) FROM {3} {1}", GetMaxFuncName(), ClassSortName,
+                maxPropExpression == null ? IdColomn.ColomnName : propertyAndColumn[ExpressionHandler.GetPropertyName(maxPropExpression).ToUpper()], TableName);
+            IList<IDataParameter> parms = null;
+            if (filterExpression != null)
+            {
+                parms = new List<IDataParameter>();
+                cmdText.AppendFormat(" WHERE ");
+                ExpressionHandling(cmdText, filterExpression, parms);
+            }
+            if (filterValidFiled && filterValid != null)
+            {
+                if (parms == null)
+                {
+                    cmdText.AppendFormat(" WHERE ");
+                    parms = new IDataParameter[] { filterValid.ParamFilterValid };
+                }
+                else
+                {
+                    cmdText.AppendFormat(" AND ");
+                    parms.Add(filterValid.ParamFilterValid);
+                }
+                cmdText.AppendFormat("{0}.{1}={2}{3}", ClassSortName, filterValid.ValidColumnName, DataHelper.GetParameterPrefix(), filterValid.PropertyName);
+            }
+            return DataHelper.ExecuteScalar<TMax>(cmdText.ToString(), parms);
+        }
     }
 }

@@ -43,5 +43,9 @@ namespace Nice.DataAccess.MsSql.DAL
         {
             return "COUNT";
         }
+        protected override string GetMaxFuncName()
+        {
+            return "MAX";
+        }
     }
 }

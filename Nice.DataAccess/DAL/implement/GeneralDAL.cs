@@ -144,10 +144,29 @@ namespace Nice.DataAccess.DAL
         {
             return dal.GetList(expression, page);
         }
-
         public long Count()
         {
             return dal.Count();
+        }
+
+        public TMax Max<TMax>(bool filterValidFiled)
+        {
+            return dal.Max<TMax>(null, null, filterValidFiled);
+        }
+
+        public TMax Max<TMax>(Expression<Func<T, bool>> filterExpression, bool filterValidFiled)
+        {
+            return dal.Max<TMax>(null, filterExpression, filterValidFiled);
+        }
+
+        public TMax Max<TMax>(Expression<Func<T, object>> maxPropExpression, bool filterValidFiled)
+        {
+            return dal.Max<TMax>(maxPropExpression, null, filterValidFiled);
+        }
+
+        public TMax Max<TMax>(Expression<Func<T, object>> maxPropExpression, Expression<Func<T, bool>> filterExpression, bool filterValidFiled)
+        {
+            return dal.Max<TMax>(maxPropExpression, filterExpression, filterValidFiled);
         }
         #endregion
 

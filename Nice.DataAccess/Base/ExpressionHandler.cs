@@ -110,7 +110,7 @@ namespace Nice.DataAccess
                         columnName = attr.Name;
                     }
                     sbSql.Append(columnName);
-                    parameters.Add(new DataParameter() { ParameterName = string.Format("{0}{1}", DataHelper.GetParameterPrefix(), expression.Member.Name) });
+                    parameters.Add(new DataParameter() { ParameterName = string.Format("{0}{1}_{2}", DataHelper.GetParameterPrefix(), expression.Member.Name, parameters.Count) });
                 }
                 else
                 {

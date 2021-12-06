@@ -107,13 +107,13 @@ namespace Nice.DataAccess
                     connection.Open();
                 }
                 cmd.CommandText = cmdText;
-                if (dbps != null)
+                if (dbps != null && dbps.Count > 0)
                 {
                     dataProvider.AttachParameters(cmd, dbps);
                 }
                 cmd.CommandType = commandType;
                 cmd.CommandTimeout = commandTimeout;
-                return cmd.ExecuteNonQuery(); ;
+                return cmd.ExecuteNonQuery();
             }
             catch (DbException ex)
             {
@@ -167,7 +167,7 @@ namespace Nice.DataAccess
                 connection = dataProvider.GetConnection();
                 cmd.Connection = connection;
                 cmd.CommandText = cmdText;
-                if (dbps != null)
+                if (dbps != null && dbps.Count > 0)
                 {
                     dataProvider.AttachParameters(cmd, dbps);
                 }
@@ -190,6 +190,67 @@ namespace Nice.DataAccess
                 {
                     connection.Close();
                     connection.Dispose();
+                }
+            }
+        }
+
+        public int ExecuteNonQuery(IList<string> cmdText, IList<IList<IDataParameter>> dbps)
+        {
+            IDbConnection connection = null;
+            IDbTransaction trans = null;
+            int n = 0;
+            try
+            {
+                IDbCommand cmd = dataProvider.GetCommand();
+                if (Transaction.Current != null)
+                {
+                    cmd.Connection = Transaction.Current.DbTransaction.Connection;
+                    cmd.Transaction = Transaction.Current.DbTransaction;
+                }
+                else
+                {
+                    connection = dataProvider.GetConnection();
+                    cmd.Connection = connection;
+                    connection.Open();
+                    trans = connection.BeginTransaction();
+                    cmd.Transaction = trans;
+                }
+                cmd.CommandTimeout = commandTimeout;
+                int count = 0;
+                for (; n < cmdText.Count; n++)
+                {
+                    cmd.CommandText = cmdText[n];
+                    if (dbps != null && dbps[n] != null)
+                        dataProvider.AttachParameters(cmd, dbps[n]);
+                    count += cmd.ExecuteNonQuery();
+
+                }
+                if (trans != null)
+                    trans.Commit();
+                return count;
+            }
+            catch (DbException ex)
+            {
+                if (trans != null)
+                    trans.Rollback();
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                if (trans != null)
+                    trans.Rollback();
+                throw ex;
+            }
+            finally
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                    connection.Dispose();
+                }
+                if (trans != null)
+                {
+                    trans.Dispose();
                 }
             }
         }
@@ -263,7 +324,7 @@ namespace Nice.DataAccess
                 cmd = dataProvider.GetCommand();
                 cmd.Connection = dataProvider.GetConnection();
                 cmd.CommandText = cmdText;
-                if (dbps != null)
+                if (dbps != null && dbps.Count > 0)
                 {
                     dataProvider.AttachParameters(cmd, dbps);
                 }
@@ -323,7 +384,7 @@ namespace Nice.DataAccess
                 connection = dataProvider.GetConnection();
                 cmd.CommandText = cmdText;
                 cmd.Connection = connection;
-                if (dbps != null)
+                if (dbps != null && dbps.Count > 0)
                 {
                     dataProvider.AttachParameters(cmd, dbps);
                 }
@@ -388,7 +449,7 @@ namespace Nice.DataAccess
                 connection = dataProvider.GetConnection();
                 cmd.Connection = connection;
                 cmd.CommandText = cmdText;
-                if (dbps != null)
+                if (dbps != null && dbps.Count > 0)
                 {
                     dataProvider.AttachParameters(cmd, dbps);
                 }

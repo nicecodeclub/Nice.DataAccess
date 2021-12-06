@@ -158,5 +158,14 @@ namespace Nice.DataAccess.DAL
         /// </summary>
         /// <returns></returns>
         long Count();
+        /// <summary>
+        /// 获取指定字段的最大值
+        /// </summary>
+        /// <typeparam name="TMax"></typeparam>
+        /// <param name="maxPropExpression">指定字段表达式</param>
+        /// <param name="filterExpression">where 筛选条件</param>
+        /// <param name="filterValidFiled">过滤无效字段</param>
+        /// <returns></returns>
+        TMax Max<TMax>(Expression<Func<T, object>> maxPropExpression, Expression<Func<T, bool>> filterExpression, bool filterValidFiled);
     }
 }

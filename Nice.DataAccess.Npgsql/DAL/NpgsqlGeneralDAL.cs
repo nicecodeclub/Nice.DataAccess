@@ -34,5 +34,9 @@ namespace Nice.DataAccess.Npgsql.DAL
         {
             return "COUNT";
         }
+        protected override string GetMaxFuncName()
+        {
+            return "MAX";
+        }
     }
 }
