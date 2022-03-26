@@ -81,8 +81,10 @@ Nuget Package Manager
      {
          return dal.IsExist(PropertyName, PropertyValue, IdValue);
      }
-  
-  
+     public string GetMaxId()
+     {
+         return dal.Max<string>(false);
+     }
   5、SQL操作   
     
     
